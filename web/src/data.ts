@@ -39,7 +39,21 @@ export interface ULot { id: string; lat: number; lng: number; name: string | nul
 export interface Universe { lots: ULot[]; stats: Record<string, any>; owned_timeline: { m: string; n: number; spaces: number; cum_lots: number; cum_spaces: number }[];
   owned_totals: { d: string; lots: number; spaces: number }[]; osm_attribution: string; }
 
-export interface Bundle { summary: Summary; lots: Lot[]; events: Event[]; financials: Financials; forecast: Forecast; quality: Quality; universe: Universe | null; source: string; }
+export interface PArea { id: string; name: string; ja: string; type: string; lat?: number; lng?: number; radius_km?: number;
+  listings: number; waitlist: number; open: number; noflag: number; waitlist_share: number | null; prev_waitlist_share: number | null;
+  portal_lots: number; known_lots: number; owned_lots: number; owned_spaces: number; median_car_rent: number | null; car_listings: number;
+  series: { t: string; w: number | null; n: number }[]; }
+export interface Panel { generated_utc: string; snapshots_7d: number; runs_total: number; last_snapshot: string | null; areas: PArea[];
+  busiest: { id: string; name: string; w: number } | null; quietest: { id: string; name: string; w: number } | null;
+  by_type: { vehicle: string; contract: string; listings: number; waitlist_share: number | null; median_rent: number | null; min_rent: number | null; max_rent: number | null }[];
+  by_facility: { facility: string; listings: number; waitlist_share: number | null }[];
+  decomp: { label: string; total: number; spaces?: number; yield_mix?: number; revenue_leased?: number; revenue_owned?: number; margin?: number; margin_ly?: number }[];
+  decomp_avg: { total: number; spaces: number; yield_mix: number } | null; street_estimates: Record<string, string>[];
+  owned: { per_year: { y: string; n: number; spaces: number; converted: number }[]; recent: { name: string; addr: string; spaces: number; opened: string; converted: boolean; url: string }[]; last12: number };
+  coverage: { pref: string; portal: number; owned: number; known: number }[];
+  events: (Event & { lot_name: string | null; area: string | null })[]; universe_stats: Record<string, any>; }
+
+export interface Bundle { summary: Summary; lots: Lot[]; events: Event[]; financials: Financials; forecast: Forecast; quality: Quality; universe: Universe | null; panel: Panel | null; source: string; }
 
 export const REPO = "https://github.com/Stellarky/paraca-altdata";
 const DEFAULT_BASE = "https://raw.githubusercontent.com/Stellarky/paraca-altdata/data/web/";
@@ -47,7 +61,7 @@ const DEFAULT_BASE = "https://raw.githubusercontent.com/Stellarky/paraca-altdata
 declare global { interface Window { __PARACA_DATA__?: Omit<Bundle, "source">; } }
 
 export async function loadAll(): Promise<Bundle> {
-  if (window.__PARACA_DATA__) return { ...window.__PARACA_DATA__, universe: window.__PARACA_DATA__.universe ?? null, source: "embedded snapshot" };
+  if (window.__PARACA_DATA__) return { ...window.__PARACA_DATA__, universe: window.__PARACA_DATA__.universe ?? null, panel: window.__PARACA_DATA__.panel ?? null, source: "embedded snapshot" };
   const base = (import.meta.env.VITE_DATA_BASE as string | undefined) || DEFAULT_BASE;
   const bust = `?t=${Math.floor(Date.now() / 300000)}`; // refresh at most every 5 min
   const get = async (f: string) => {
@@ -57,6 +71,6 @@ export async function loadAll(): Promise<Bundle> {
   };
   const [summary, lots, events, financials, forecast, quality] = await Promise.all(
     ["summary.json", "lots.json", "events.json", "financials.json", "forecast.json", "quality.json"].map(get));
-  const universe = await get("universe.json").catch(() => null);   // optional: added 2026-10-20
-  return { summary, lots, events, financials, forecast, quality, universe, source: base };
+  const [universe, panel] = await Promise.all([get("universe.json").catch(() => null), get("panel.json").catch(() => null)]);
+  return { summary, lots, events, financials, forecast, quality, universe, panel, source: base };
 }

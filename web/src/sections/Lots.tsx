@@ -1,23 +1,23 @@
 import { useMemo, useState } from "react";
 import { Bundle, Lot } from "../data";
-import { Card, SortTable, Status } from "../components/ui";
+import { SortTable, Status } from "../components/ui";
 import { CT_EN, jst, median, openShare, pct, VEH_EN, yen } from "../format";
 
 const KIND: Record<string, string> = { lot_new: "Lot first observed", listing_new: "Listing first observed", rent_change: "Rent changed",
   vacancy_change: "Vacancy changed", listing_removed: "Listing removed", lot_removed: "Lot no longer listed", lot_reappeared: "Lot listed again" };
 
-export default function Lots({ d }: { d: Bundle }) {
+export default function Lots({ d, area: areaFilter = "all" }: { d: Bundle; area?: string }) {
   const [q, setQ] = useState("");
   const [pref, setPref] = useState("all");
   const [sel, setSel] = useState<string | null>(() => { try { return sessionStorage.getItem("lot"); } catch { return null; } });
   const prefs = useMemo(() => Array.from(new Set(d.lots.map((l) => l.pref))).sort(), [d]);
   const rows = useMemo(() => {
     const t = q.trim().toLowerCase();
-    return d.lots.filter((l) => (pref === "all" || l.pref === pref) &&
+    return d.lots.filter((l) => (areaFilter === "all" || l.area === areaFilter) && (pref === "all" || l.pref === pref) &&
       (!t || (l.name + l.addr + l.pref + (l.area ?? "")).toLowerCase().includes(t)))
       .map((l) => ({ ...l, n: l.listings.length, rent: median(l.listings.filter((x) => x.veh === "自動車").map((x) => x.rent)),
                      open: openShare(l.listings.map((x) => x.vac)) }));
-  }, [d, q, pref]);
+  }, [d, q, pref, areaFilter]);
   const lot = d.lots.find((l) => l.id === sel) as Lot | undefined;
   const hist = lot ? d.events.filter((e) => e.lot_id === lot.id).sort((a, b) => b.event_utc.localeCompare(a.event_utc)) : [];
   const area = (id: string | null) => d.summary.areas.find((a) => a.id === id)?.name ?? "—";
@@ -60,8 +60,8 @@ export default function Lots({ d }: { d: Bundle }) {
           </div>
         </div>
       )}
-      <Card>
-        <SortTable rows={rows} rowKey={(r) => r.id} selected={sel} onRow={(r) => setSel(r.id)} initial={{ key: "pref", dir: 1 }} cols={[
+      <div>
+        <SortTable rows={rows} rowKey={(r) => r.id} selected={sel} onRow={(r) => setSel(r.id)} initial={{ key: "n", dir: -1 }} cols={[
           { key: "name", label: "Lot", sort: (r) => r.name, render: (r) => <><b style={{ fontWeight: 500 }}>{r.name}</b><div className="small muted">{r.addr}</div></> },
           { key: "pref", label: "Prefecture", sort: (r) => r.pref },
           { key: "area", label: "Matched market", sort: (r) => r.area ?? "~", render: (r) => r.area ? area(r.area) : <span className="muted">—</span> },
@@ -70,7 +70,7 @@ export default function Lots({ d }: { d: Bundle }) {
           { key: "open", label: "Open", right: true, sort: (r) => r.open, render: (r) => pct(r.open, 0) },
           { key: "first", label: "First seen", sort: (r) => r.first, render: (r) => <span className="small mono">{jst(r.first, false)}</span> },
         ]} />
-      </Card>
+      </div>
     </>
   );
 }

@@ -230,6 +230,8 @@ def export_all(db: Path, out: Path, fin_csv: Path) -> None:
         "altdata_link": {"status": "insufficient_history", "first_observation": snaps[0]["collection_utc"] if snaps else None,
             "note": "The monthly-portal signal starts on 2026-10-20. At least ~8 quarters of overlap with reported results are "
                     "needed before testing whether it leads revenue; no predictive claim is made."}})
+    from . import panel
+    _j(web / "panel.json", panel.build(con, qs, universe, ustats, fin_csv.parent / "street_estimates.csv"))
     con.close()
 
 

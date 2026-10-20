@@ -3,7 +3,8 @@ import { Circle, CircleMarker, MapContainer, Popup, TileLayer, Tooltip } from "r
 import { Bundle, Lot } from "../data";
 import { CT_EN, VAC_EN, VEH_EN, yen } from "../format";
 
-const COLORS: Record<string, string> = { open: "#0ca30c", waitlist: "#d03b3b", mixed: "#eda100", unknown: "#85837c" };
+// same status colors as the lot-map grid (満 / 混 / 空 / —); hex because canvas markers can't read CSS variables
+const COLORS: Record<string, string> = { waitlist: "#e06c6c", mixed: "#e8b14a", open: "#8f8e88", unknown: "#c9c8c2" };
 
 function lotStatus(l: Lot) {
   const v = new Set(l.listings.map((x) => x.vac).filter((x) => x !== "unknown"));
@@ -36,8 +37,8 @@ export default function MapView({ d }: { d: Bundle }) {
         <span className="muted small">{lots.length} portal lots{showOwned && ownedOnly.length ? ` + ${ownedOnly.length} owned lots` : ""} shown</span>
       </div>
       <div className="legend-row">
-        {Object.entries({ open: "All listings open", mixed: "Some open", waitlist: "All waitlisted", unknown: "No vacancy flag" }).map(([k, l]) =>
-          <span key={k}><span className="dot" style={{ background: COLORS[k], width: 10, height: 10 }} /> {l}</span>)}
+        {Object.entries({ waitlist: "満 All waitlisted", mixed: "混 Some open", open: "空 All open", unknown: "— No vacancy flag" }).map(([k, l]) =>
+          <span key={k}><span className="dot" style={{ background: COLORS[k], width: 10, height: 10 }} />{l}</span>)}
         {d.universe && <span><span className="dot" style={{ background: "transparent", border: "2px solid #2a78d6", width: 10, height: 10 }} /> Owned lot from opening releases (no status)</span>}
         <span className="muted">· marker size ∝ listings (portal) or spaces (owned)</span>
       </div>

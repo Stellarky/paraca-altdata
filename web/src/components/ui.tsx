@@ -1,20 +1,24 @@
 import { ReactNode, useMemo, useState } from "react";
 import { VAC_EN } from "../format";
 
-export function Card({ title, note, right, children, className = "" }: { title?: ReactNode; note?: ReactNode; right?: ReactNode; children: ReactNode; className?: string }) {
+export function Card({ title, note, right, children, className = "", id }: { title?: ReactNode; note?: ReactNode; right?: ReactNode; children: ReactNode; className?: string; id?: string }) {
   return (
-    <section className={"card " + className}>
+    <section className={"card " + className} id={id}>
       {(title || right) && (
         <div className="card-h">
           {title && <h3>{title}</h3>}
-          {note && <span className="note">{note}</span>}
           <span className="grow" />
           {right}
         </div>
       )}
+      {note && <p className="desc">{note}</p>}
       {children}
     </section>
   );
+}
+
+export function Stat({ value, label, off }: { value: ReactNode; label: ReactNode; off?: boolean }) {
+  return <div className={"stat" + (off ? " off" : "")}><b>{value}</b><span>{label}</span></div>;
 }
 
 export function Kpi({ label, value, unit, foot, disabled }: { label: ReactNode; value: ReactNode; unit?: string; foot?: ReactNode; disabled?: boolean }) {
@@ -30,7 +34,7 @@ export function Kpi({ label, value, unit, foot, disabled }: { label: ReactNode; 
 export function Unavailable({ title, reason, metrics }: { title: string; reason: string; metrics?: string[] }) {
   return (
     <div className="unavail" role="note">
-      <span className="tag">⊘ Not available from a compliant source</span>
+      <span className="tag">Not available from a permitted source</span>
       <h3>{title}</h3>
       <p>{reason}</p>
       {metrics && (
@@ -53,7 +57,7 @@ export function Tip({ active, payload, label, fmt, labelFmt }: any) {
       <div className="h">{labelFmt ? labelFmt(label, payload) : label}</div>
       {payload.map((p: any) => (
         <div className="r" key={p.dataKey ?? p.name}>
-          <span><span className="swatch" style={{ background: p.color ?? p.fill, marginRight: 6 }} />{p.name}</span>
+          <span><span className="swatch sq" style={{ background: p.color ?? p.fill, marginRight: 6 }} />{p.name}</span>
           <b>{fmt ? fmt(p.value, p) : p.value}</b>
         </div>
       ))}
@@ -61,8 +65,8 @@ export function Tip({ active, payload, label, fmt, labelFmt }: any) {
   );
 }
 
-export function Legend({ items }: { items: { label: string; color: string }[] }) {
-  return <div className="chart-legend">{items.map((i) => <span key={i.label}><span className="swatch" style={{ background: i.color }} />{i.label}</span>)}</div>;
+export function Legend({ items, sq }: { items: { label: string; color: string; dashed?: boolean }[]; sq?: boolean }) {
+  return <div className="chart-legend">{items.map((i) => <span key={i.label}><span className={"swatch" + (sq ? " sq" : "")} style={{ background: i.dashed ? "transparent" : i.color, borderTop: i.dashed ? `2px dashed ${i.color}` : undefined }} />{i.label}</span>)}</div>;
 }
 
 export interface Col<T> { key: string; label: ReactNode; render?: (r: T) => ReactNode; sort?: (r: T) => number | string | null; right?: boolean; }
