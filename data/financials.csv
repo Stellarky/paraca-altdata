@@ -1,0 +1,194 @@
+fiscal_year,period,period_start,period_end,kind,metric,value,unit,basis,source_url,release_date,derived,note
+2022,FY,2021-10-01,2022-09-30,actual,revenue,12974,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,0,prior-year comparative in FY2023 決算短信
+2022,FY,2021-10-01,2022-09-30,actual,operating_profit,2253,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,0,prior-year comparative in FY2023 決算短信
+2022,FY,2021-10-01,2022-09-30,actual,ordinary_profit,2039,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,0,prior-year comparative in FY2023 決算短信
+2022,FY,2021-10-01,2022-09-30,actual,net_income,1395,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,0,prior-year comparative in FY2023 決算短信
+2022,FY,2021-10-01,2022-09-30,actual,lots_leased,1867,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,1,derived: FY2023 period-end minus disclosed net additions
+2022,FY,2021-10-01,2022-09-30,actual,spaces_leased,28090,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,1,derived: FY2023 period-end minus disclosed net additions
+2022,FY,2021-10-01,2022-09-30,actual,lots_owned,252,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,1,derived: FY2023 period-end minus disclosed net additions
+2022,FY,2021-10-01,2022-09-30,actual,spaces_owned,4762,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,1,derived: FY2023 period-end minus disclosed net additions
+2022,FY,2021-10-01,2022-09-30,actual,lots_total,2119,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,1,derived: FY2023 period-end minus disclosed net additions
+2022,FY,2021-10-01,2022-09-30,actual,spaces_total,32852,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,1,derived: FY2023 period-end minus disclosed net additions
+2023,Q1,2022-10-01,2022-12-31,actual,revenue,3638,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240207_ir_tan1Q.pdf,2024-02-07,0,prior-year comparative in FY2024 Q1 決算短信
+2023,Q1,2022-10-01,2022-12-31,actual,operating_profit,778,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240207_ir_tan1Q.pdf,2024-02-07,0,prior-year comparative in FY2024 Q1 決算短信
+2023,Q1,2022-10-01,2022-12-31,actual,ordinary_profit,725,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240207_ir_tan1Q.pdf,2024-02-07,0,prior-year comparative in FY2024 Q1 決算短信
+2023,Q1,2022-10-01,2022-12-31,actual,net_income,492,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240207_ir_tan1Q.pdf,2024-02-07,0,prior-year comparative in FY2024 Q1 決算短信
+2023,Q1,2022-10-01,2022-12-31,actual,revenue_leased,2920,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240207_ir_tan1Q.pdf,2024-02-07,0,prior-year comparative in FY2024 Q1 決算短信
+2023,Q1,2022-10-01,2022-12-31,actual,revenue_owned,583,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240207_ir_tan1Q.pdf,2024-02-07,0,prior-year comparative in FY2024 Q1 決算短信
+2023,Q1,2022-10-01,2022-12-31,actual,revenue_other,135,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240207_ir_tan1Q.pdf,2024-02-07,0,prior-year comparative in FY2024 Q1 決算短信
+2023,H1,2022-10-01,2023-03-31,actual,revenue,7182,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240509_ir_tan2Q.pdf,2024-05-09,0,prior-year comparative in FY2024 H1 決算短信
+2023,H1,2022-10-01,2023-03-31,actual,operating_profit,1433,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240509_ir_tan2Q.pdf,2024-05-09,0,prior-year comparative in FY2024 H1 決算短信
+2023,H1,2022-10-01,2023-03-31,actual,ordinary_profit,1327,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240509_ir_tan2Q.pdf,2024-05-09,0,prior-year comparative in FY2024 H1 決算短信
+2023,H1,2022-10-01,2023-03-31,actual,net_income,901,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240509_ir_tan2Q.pdf,2024-05-09,0,prior-year comparative in FY2024 H1 決算短信
+2023,H1,2022-10-01,2023-03-31,actual,revenue_leased,5769,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240509_ir_tan2Q.pdf,2024-05-09,0,prior-year comparative in FY2024 H1 決算短信
+2023,H1,2022-10-01,2023-03-31,actual,revenue_owned,1153,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240509_ir_tan2Q.pdf,2024-05-09,0,prior-year comparative in FY2024 H1 決算短信
+2023,H1,2022-10-01,2023-03-31,actual,revenue_other,260,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240509_ir_tan2Q.pdf,2024-05-09,0,prior-year comparative in FY2024 H1 決算短信
+2023,Q3,2022-10-01,2023-06-30,actual,revenue,10906,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240807_ir_tan3Q.pdf,2024-08-07,0,prior-year comparative in FY2024 Q3 決算短信
+2023,Q3,2022-10-01,2023-06-30,actual,operating_profit,2181,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240807_ir_tan3Q.pdf,2024-08-07,0,prior-year comparative in FY2024 Q3 決算短信
+2023,Q3,2022-10-01,2023-06-30,actual,ordinary_profit,2022,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240807_ir_tan3Q.pdf,2024-08-07,0,prior-year comparative in FY2024 Q3 決算短信
+2023,Q3,2022-10-01,2023-06-30,actual,net_income,1377,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240807_ir_tan3Q.pdf,2024-08-07,0,prior-year comparative in FY2024 Q3 決算短信
+2023,Q3,2022-10-01,2023-06-30,actual,revenue_leased,8760,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240807_ir_tan3Q.pdf,2024-08-07,0,prior-year comparative in FY2024 Q3 決算短信
+2023,Q3,2022-10-01,2023-06-30,actual,revenue_owned,1743,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240807_ir_tan3Q.pdf,2024-08-07,0,prior-year comparative in FY2024 Q3 決算短信
+2023,Q3,2022-10-01,2023-06-30,actual,revenue_other,403,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240807_ir_tan3Q.pdf,2024-08-07,0,prior-year comparative in FY2024 Q3 決算短信
+2023,FY,2022-10-01,2023-09-30,actual,revenue,14774,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,0,
+2023,FY,2022-10-01,2023-09-30,actual,operating_profit,2934,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,0,
+2023,FY,2022-10-01,2023-09-30,actual,ordinary_profit,2712,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,0,
+2023,FY,2022-10-01,2023-09-30,actual,net_income,1818,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,0,
+2023,FY,2022-10-01,2023-09-30,actual,revenue_leased,11845,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,0,
+2023,FY,2022-10-01,2023-09-30,actual,revenue_owned,2366,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,0,
+2023,FY,2022-10-01,2023-09-30,actual,revenue_other,562,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,0,
+2023,FY,2022-10-01,2023-09-30,actual,lots_leased,2012,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,0,
+2023,FY,2022-10-01,2023-09-30,actual,spaces_leased,29984,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,0,
+2023,FY,2022-10-01,2023-09-30,actual,lots_owned,273,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,0,
+2023,FY,2022-10-01,2023-09-30,actual,spaces_owned,5104,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,0,
+2023,FY,2022-10-01,2023-09-30,actual,lots_total,2285,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,0,
+2023,FY,2022-10-01,2023-09-30,actual,spaces_total,35088,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20231108_ir_tan27.pdf,2023-11-08,0,
+2024,Q1,2023-10-01,2023-12-31,actual,revenue,3976,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240207_ir_tan1Q.pdf,2024-02-07,0,
+2024,Q1,2023-10-01,2023-12-31,actual,operating_profit,781,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240207_ir_tan1Q.pdf,2024-02-07,0,
+2024,Q1,2023-10-01,2023-12-31,actual,ordinary_profit,728,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240207_ir_tan1Q.pdf,2024-02-07,0,
+2024,Q1,2023-10-01,2023-12-31,actual,net_income,485,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240207_ir_tan1Q.pdf,2024-02-07,0,
+2024,Q1,2023-10-01,2023-12-31,actual,revenue_leased,3195,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240207_ir_tan1Q.pdf,2024-02-07,0,
+2024,Q1,2023-10-01,2023-12-31,actual,revenue_owned,636,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240207_ir_tan1Q.pdf,2024-02-07,0,
+2024,Q1,2023-10-01,2023-12-31,actual,revenue_other,145,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240207_ir_tan1Q.pdf,2024-02-07,0,
+2024,Q1,2023-10-01,2023-12-31,actual,lots_leased,2088,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240207_ir_tan1Q.pdf,2024-02-07,0,
+2024,Q1,2023-10-01,2023-12-31,actual,spaces_leased,31553,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240207_ir_tan1Q.pdf,2024-02-07,0,
+2024,Q1,2023-10-01,2023-12-31,actual,lots_owned,278,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240207_ir_tan1Q.pdf,2024-02-07,0,
+2024,Q1,2023-10-01,2023-12-31,actual,spaces_owned,5140,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240207_ir_tan1Q.pdf,2024-02-07,0,
+2024,Q1,2023-10-01,2023-12-31,actual,lots_total,2366,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240207_ir_tan1Q.pdf,2024-02-07,0,
+2024,Q1,2023-10-01,2023-12-31,actual,spaces_total,36693,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240207_ir_tan1Q.pdf,2024-02-07,0,
+2024,H1,2023-10-01,2024-03-31,actual,revenue,7872,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240509_ir_tan2Q.pdf,2024-05-09,0,
+2024,H1,2023-10-01,2024-03-31,actual,operating_profit,1408,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240509_ir_tan2Q.pdf,2024-05-09,0,
+2024,H1,2023-10-01,2024-03-31,actual,ordinary_profit,1299,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240509_ir_tan2Q.pdf,2024-05-09,0,
+2024,H1,2023-10-01,2024-03-31,actual,net_income,851,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240509_ir_tan2Q.pdf,2024-05-09,0,
+2024,H1,2023-10-01,2024-03-31,actual,revenue_leased,6345,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240509_ir_tan2Q.pdf,2024-05-09,0,
+2024,H1,2023-10-01,2024-03-31,actual,revenue_owned,1247,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240509_ir_tan2Q.pdf,2024-05-09,0,
+2024,H1,2023-10-01,2024-03-31,actual,revenue_other,279,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240509_ir_tan2Q.pdf,2024-05-09,0,
+2024,H1,2023-10-01,2024-03-31,actual,lots_leased,2107,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240509_ir_tan2Q.pdf,2024-05-09,0,
+2024,H1,2023-10-01,2024-03-31,actual,spaces_leased,32874,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240509_ir_tan2Q.pdf,2024-05-09,0,
+2024,H1,2023-10-01,2024-03-31,actual,lots_owned,281,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240509_ir_tan2Q.pdf,2024-05-09,0,
+2024,H1,2023-10-01,2024-03-31,actual,spaces_owned,5153,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240509_ir_tan2Q.pdf,2024-05-09,0,
+2024,H1,2023-10-01,2024-03-31,actual,lots_total,2388,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240509_ir_tan2Q.pdf,2024-05-09,0,
+2024,H1,2023-10-01,2024-03-31,actual,spaces_total,38027,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240509_ir_tan2Q.pdf,2024-05-09,0,
+2024,Q3,2023-10-01,2024-06-30,actual,revenue,12029,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240807_ir_tan3Q.pdf,2024-08-07,0,
+2024,Q3,2023-10-01,2024-06-30,actual,operating_profit,2116,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240807_ir_tan3Q.pdf,2024-08-07,0,
+2024,Q3,2023-10-01,2024-06-30,actual,ordinary_profit,1941,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240807_ir_tan3Q.pdf,2024-08-07,0,
+2024,Q3,2023-10-01,2024-06-30,actual,net_income,1252,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240807_ir_tan3Q.pdf,2024-08-07,0,
+2024,Q3,2023-10-01,2024-06-30,actual,revenue_leased,9696,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240807_ir_tan3Q.pdf,2024-08-07,0,
+2024,Q3,2023-10-01,2024-06-30,actual,revenue_owned,1900,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240807_ir_tan3Q.pdf,2024-08-07,0,
+2024,Q3,2023-10-01,2024-06-30,actual,revenue_other,432,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240807_ir_tan3Q.pdf,2024-08-07,0,
+2024,Q3,2023-10-01,2024-06-30,actual,lots_leased,2139,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240807_ir_tan3Q.pdf,2024-08-07,0,
+2024,Q3,2023-10-01,2024-06-30,actual,spaces_leased,35070,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240807_ir_tan3Q.pdf,2024-08-07,0,
+2024,Q3,2023-10-01,2024-06-30,actual,lots_owned,295,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240807_ir_tan3Q.pdf,2024-08-07,0,
+2024,Q3,2023-10-01,2024-06-30,actual,spaces_owned,5377,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240807_ir_tan3Q.pdf,2024-08-07,0,
+2024,Q3,2023-10-01,2024-06-30,actual,lots_total,2434,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240807_ir_tan3Q.pdf,2024-08-07,0,
+2024,Q3,2023-10-01,2024-06-30,actual,spaces_total,40447,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20240807_ir_tan3Q.pdf,2024-08-07,0,
+2024,FY,2023-10-01,2024-09-30,actual,revenue,16380,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20241108_ir_tan28.pdf,2024-11-08,0,
+2024,FY,2023-10-01,2024-09-30,actual,operating_profit,3021,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20241108_ir_tan28.pdf,2024-11-08,0,
+2024,FY,2023-10-01,2024-09-30,actual,ordinary_profit,2776,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20241108_ir_tan28.pdf,2024-11-08,0,
+2024,FY,2023-10-01,2024-09-30,actual,net_income,1817,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20241108_ir_tan28.pdf,2024-11-08,0,
+2024,FY,2023-10-01,2024-09-30,actual,revenue_leased,13188,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20241108_ir_tan28.pdf,2024-11-08,0,
+2024,FY,2023-10-01,2024-09-30,actual,revenue_owned,2604,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20241108_ir_tan28.pdf,2024-11-08,0,
+2024,FY,2023-10-01,2024-09-30,actual,revenue_other,587,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20241108_ir_tan28.pdf,2024-11-08,0,
+2024,FY,2023-10-01,2024-09-30,actual,gross_profit_leased,2456,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20241108_ir_tan28.pdf,2024-11-08,0,
+2024,FY,2023-10-01,2024-09-30,actual,gross_profit_owned,2124,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20241108_ir_tan28.pdf,2024-11-08,0,
+2024,FY,2023-10-01,2024-09-30,actual,lots_leased,2144,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20241108_ir_tan28.pdf,2024-11-08,0,
+2024,FY,2023-10-01,2024-09-30,actual,spaces_leased,34996,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20241108_ir_tan28.pdf,2024-11-08,0,
+2024,FY,2023-10-01,2024-09-30,actual,lots_owned,305,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20241108_ir_tan28.pdf,2024-11-08,0,
+2024,FY,2023-10-01,2024-09-30,actual,spaces_owned,5435,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20241108_ir_tan28.pdf,2024-11-08,0,
+2024,FY,2023-10-01,2024-09-30,actual,lots_total,2449,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20241108_ir_tan28.pdf,2024-11-08,0,
+2024,FY,2023-10-01,2024-09-30,actual,spaces_total,40431,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20241108_ir_tan28.pdf,2024-11-08,0,
+2025,Q1,2024-10-01,2024-12-31,actual,revenue,4410,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250207_ir_tan1Q.pdf,2025-02-07,0,
+2025,Q1,2024-10-01,2024-12-31,actual,operating_profit,855,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250207_ir_tan1Q.pdf,2025-02-07,0,
+2025,Q1,2024-10-01,2024-12-31,actual,ordinary_profit,785,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250207_ir_tan1Q.pdf,2025-02-07,0,
+2025,Q1,2024-10-01,2024-12-31,actual,net_income,534,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250207_ir_tan1Q.pdf,2025-02-07,0,
+2025,Q1,2024-10-01,2024-12-31,actual,revenue_leased,3548,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250207_ir_tan1Q.pdf,2025-02-07,0,
+2025,Q1,2024-10-01,2024-12-31,actual,revenue_owned,718,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250207_ir_tan1Q.pdf,2025-02-07,0,
+2025,Q1,2024-10-01,2024-12-31,actual,revenue_other,143,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250207_ir_tan1Q.pdf,2025-02-07,0,
+2025,Q1,2024-10-01,2024-12-31,actual,lots_leased,2194,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250207_ir_tan1Q.pdf,2025-02-07,0,
+2025,Q1,2024-10-01,2024-12-31,actual,spaces_leased,39304,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250207_ir_tan1Q.pdf,2025-02-07,0,
+2025,Q1,2024-10-01,2024-12-31,actual,lots_owned,316,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250207_ir_tan1Q.pdf,2025-02-07,0,
+2025,Q1,2024-10-01,2024-12-31,actual,spaces_owned,5567,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250207_ir_tan1Q.pdf,2025-02-07,0,
+2025,Q1,2024-10-01,2024-12-31,actual,lots_total,2510,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250207_ir_tan1Q.pdf,2025-02-07,0,
+2025,Q1,2024-10-01,2024-12-31,actual,spaces_total,44871,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250207_ir_tan1Q.pdf,2025-02-07,0,
+2025,H1,2024-10-01,2025-03-31,actual,revenue,8636,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250509_ir_tan2Q.pdf,2025-05-09,0,
+2025,H1,2024-10-01,2025-03-31,actual,operating_profit,1563,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250509_ir_tan2Q.pdf,2025-05-09,0,
+2025,H1,2024-10-01,2025-03-31,actual,ordinary_profit,1417,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250509_ir_tan2Q.pdf,2025-05-09,0,
+2025,H1,2024-10-01,2025-03-31,actual,net_income,958,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250509_ir_tan2Q.pdf,2025-05-09,0,
+2025,H1,2024-10-01,2025-03-31,actual,revenue_leased,6950,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250509_ir_tan2Q.pdf,2025-05-09,0,
+2025,H1,2024-10-01,2025-03-31,actual,revenue_owned,1401,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250509_ir_tan2Q.pdf,2025-05-09,0,
+2025,H1,2024-10-01,2025-03-31,actual,revenue_other,284,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250509_ir_tan2Q.pdf,2025-05-09,0,
+2025,H1,2024-10-01,2025-03-31,actual,lots_leased,2204,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250509_ir_tan2Q.pdf,2025-05-09,0,
+2025,H1,2024-10-01,2025-03-31,actual,spaces_leased,39413,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250509_ir_tan2Q.pdf,2025-05-09,0,
+2025,H1,2024-10-01,2025-03-31,actual,lots_owned,321,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250509_ir_tan2Q.pdf,2025-05-09,0,
+2025,H1,2024-10-01,2025-03-31,actual,spaces_owned,5669,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250509_ir_tan2Q.pdf,2025-05-09,0,
+2025,H1,2024-10-01,2025-03-31,actual,lots_total,2525,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250509_ir_tan2Q.pdf,2025-05-09,0,
+2025,H1,2024-10-01,2025-03-31,actual,spaces_total,45082,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250509_ir_tan2Q.pdf,2025-05-09,0,
+2025,Q3,2024-10-01,2025-06-30,actual,revenue,13059,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250807_ir_tan3Q.pdf,2025-08-07,0,lot counts not stated in this report
+2025,Q3,2024-10-01,2025-06-30,actual,operating_profit,2349,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250807_ir_tan3Q.pdf,2025-08-07,0,lot counts not stated in this report
+2025,Q3,2024-10-01,2025-06-30,actual,ordinary_profit,2121,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250807_ir_tan3Q.pdf,2025-08-07,0,lot counts not stated in this report
+2025,Q3,2024-10-01,2025-06-30,actual,net_income,1430,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/09/20250807_ir_tan3Q.pdf,2025-08-07,0,lot counts not stated in this report
+2025,Q3,2024-10-01,2025-06-30,actual,revenue_leased,10476,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/08/20260806_ir_tan3Q.pdf,2026-08-06,0,segment split from prior-year comparative in FY2026 Q3 決算短信
+2025,Q3,2024-10-01,2025-06-30,actual,revenue_owned,2129,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/08/20260806_ir_tan3Q.pdf,2026-08-06,0,segment split from prior-year comparative in FY2026 Q3 決算短信
+2025,Q3,2024-10-01,2025-06-30,actual,revenue_other,453,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/08/20260806_ir_tan3Q.pdf,2026-08-06,0,segment split from prior-year comparative in FY2026 Q3 決算短信
+2025,FY,2024-10-01,2025-09-30,actual,revenue,17630,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/11/20251107_ir_tan29.pdf,2025-11-07,0,
+2025,FY,2024-10-01,2025-09-30,actual,operating_profit,3266,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/11/20251107_ir_tan29.pdf,2025-11-07,0,
+2025,FY,2024-10-01,2025-09-30,actual,ordinary_profit,2949,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/11/20251107_ir_tan29.pdf,2025-11-07,0,
+2025,FY,2024-10-01,2025-09-30,actual,net_income,2044,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/11/20251107_ir_tan29.pdf,2025-11-07,0,
+2025,FY,2024-10-01,2025-09-30,actual,revenue_leased,14091,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/11/20251107_ir_tan29.pdf,2025-11-07,0,
+2025,FY,2024-10-01,2025-09-30,actual,revenue_owned,2907,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/11/20251107_ir_tan29.pdf,2025-11-07,0,
+2025,FY,2024-10-01,2025-09-30,actual,revenue_other,631,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/11/20251107_ir_tan29.pdf,2025-11-07,0,
+2025,FY,2024-10-01,2025-09-30,actual,gross_profit_leased,2617,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/11/20251107_ir_tan29.pdf,2025-11-07,0,
+2025,FY,2024-10-01,2025-09-30,actual,gross_profit_owned,2365,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/11/20251107_ir_tan29.pdf,2025-11-07,0,
+2025,FY,2024-10-01,2025-09-30,actual,lots_leased,2265,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/11/20251107_ir_tan29.pdf,2025-11-07,0,
+2025,FY,2024-10-01,2025-09-30,actual,spaces_leased,42459,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/11/20251107_ir_tan29.pdf,2025-11-07,0,
+2025,FY,2024-10-01,2025-09-30,actual,lots_owned,333,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/11/20251107_ir_tan29.pdf,2025-11-07,0,
+2025,FY,2024-10-01,2025-09-30,actual,spaces_owned,5773,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/11/20251107_ir_tan29.pdf,2025-11-07,0,
+2025,FY,2024-10-01,2025-09-30,actual,lots_total,2598,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/11/20251107_ir_tan29.pdf,2025-11-07,0,
+2025,FY,2024-10-01,2025-09-30,actual,spaces_total,48232,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2025/11/20251107_ir_tan29.pdf,2025-11-07,0,
+2026,Q1,2025-10-01,2025-12-31,actual,revenue,4637,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/02/20260206_ir_tan1Q.pdf,2026-02-06,0,
+2026,Q1,2025-10-01,2025-12-31,actual,operating_profit,867,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/02/20260206_ir_tan1Q.pdf,2026-02-06,0,
+2026,Q1,2025-10-01,2025-12-31,actual,ordinary_profit,775,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/02/20260206_ir_tan1Q.pdf,2026-02-06,0,
+2026,Q1,2025-10-01,2025-12-31,actual,net_income,534,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/02/20260206_ir_tan1Q.pdf,2026-02-06,0,
+2026,Q1,2025-10-01,2025-12-31,actual,revenue_leased,3705,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/02/20260206_ir_tan1Q.pdf,2026-02-06,0,
+2026,Q1,2025-10-01,2025-12-31,actual,revenue_owned,772,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/02/20260206_ir_tan1Q.pdf,2026-02-06,0,
+2026,Q1,2025-10-01,2025-12-31,actual,revenue_other,158,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/02/20260206_ir_tan1Q.pdf,2026-02-06,0,
+2026,Q1,2025-10-01,2025-12-31,actual,lots_leased,2315,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2026/02/20260206_ir_tan1Q.pdf,2026-02-06,0,
+2026,Q1,2025-10-01,2025-12-31,actual,spaces_leased,43987,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2026/02/20260206_ir_tan1Q.pdf,2026-02-06,0,
+2026,Q1,2025-10-01,2025-12-31,actual,lots_owned,339,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2026/02/20260206_ir_tan1Q.pdf,2026-02-06,0,
+2026,Q1,2025-10-01,2025-12-31,actual,spaces_owned,5829,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2026/02/20260206_ir_tan1Q.pdf,2026-02-06,0,
+2026,Q1,2025-10-01,2025-12-31,actual,lots_total,2654,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2026/02/20260206_ir_tan1Q.pdf,2026-02-06,0,
+2026,Q1,2025-10-01,2025-12-31,actual,spaces_total,49816,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2026/02/20260206_ir_tan1Q.pdf,2026-02-06,0,
+2026,H1,2025-10-01,2026-03-31,actual,revenue,9142,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/05/20260513_ir_tan2Q.pdf,2026-05-13,0,
+2026,H1,2025-10-01,2026-03-31,actual,operating_profit,1513,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/05/20260513_ir_tan2Q.pdf,2026-05-13,0,
+2026,H1,2025-10-01,2026-03-31,actual,ordinary_profit,1328,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/05/20260513_ir_tan2Q.pdf,2026-05-13,0,
+2026,H1,2025-10-01,2026-03-31,actual,net_income,897,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/05/20260513_ir_tan2Q.pdf,2026-05-13,0,
+2026,H1,2025-10-01,2026-03-31,actual,revenue_leased,7314,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/05/20260513_ir_tan2Q.pdf,2026-05-13,0,
+2026,H1,2025-10-01,2026-03-31,actual,revenue_owned,1516,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/05/20260513_ir_tan2Q.pdf,2026-05-13,0,
+2026,H1,2025-10-01,2026-03-31,actual,revenue_other,310,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/05/20260513_ir_tan2Q.pdf,2026-05-13,0,
+2026,H1,2025-10-01,2026-03-31,actual,lots_leased,2333,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2026/05/20260513_ir_tan2Q.pdf,2026-05-13,0,
+2026,H1,2025-10-01,2026-03-31,actual,spaces_leased,45112,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2026/05/20260513_ir_tan2Q.pdf,2026-05-13,0,
+2026,H1,2025-10-01,2026-03-31,actual,lots_owned,343,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2026/05/20260513_ir_tan2Q.pdf,2026-05-13,0,
+2026,H1,2025-10-01,2026-03-31,actual,spaces_owned,5888,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2026/05/20260513_ir_tan2Q.pdf,2026-05-13,0,
+2026,H1,2025-10-01,2026-03-31,actual,lots_total,2676,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2026/05/20260513_ir_tan2Q.pdf,2026-05-13,0,
+2026,H1,2025-10-01,2026-03-31,actual,spaces_total,51000,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2026/05/20260513_ir_tan2Q.pdf,2026-05-13,0,
+2026,Q3,2025-10-01,2026-06-30,actual,revenue,13810,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/08/20260806_ir_tan3Q.pdf,2026-08-06,0,
+2026,Q3,2025-10-01,2026-06-30,actual,operating_profit,2242,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/08/20260806_ir_tan3Q.pdf,2026-08-06,0,
+2026,Q3,2025-10-01,2026-06-30,actual,ordinary_profit,1950,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/08/20260806_ir_tan3Q.pdf,2026-08-06,0,
+2026,Q3,2025-10-01,2026-06-30,actual,net_income,1314,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/08/20260806_ir_tan3Q.pdf,2026-08-06,0,
+2026,Q3,2025-10-01,2026-06-30,actual,revenue_leased,11045,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/08/20260806_ir_tan3Q.pdf,2026-08-06,0,
+2026,Q3,2025-10-01,2026-06-30,actual,revenue_owned,2293,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/08/20260806_ir_tan3Q.pdf,2026-08-06,0,
+2026,Q3,2025-10-01,2026-06-30,actual,revenue_other,471,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/08/20260806_ir_tan3Q.pdf,2026-08-06,0,
+2026,Q3,2025-10-01,2026-06-30,actual,lots_leased,2356,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2026/08/20260806_ir_tan3Q.pdf,2026-08-06,0,
+2026,Q3,2025-10-01,2026-06-30,actual,spaces_leased,46287,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2026/08/20260806_ir_tan3Q.pdf,2026-08-06,0,
+2026,Q3,2025-10-01,2026-06-30,actual,lots_owned,345,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2026/08/20260806_ir_tan3Q.pdf,2026-08-06,0,
+2026,Q3,2025-10-01,2026-06-30,actual,spaces_owned,5912,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2026/08/20260806_ir_tan3Q.pdf,2026-08-06,0,
+2026,Q3,2025-10-01,2026-06-30,actual,lots_total,2701,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2026/08/20260806_ir_tan3Q.pdf,2026-08-06,0,
+2026,Q3,2025-10-01,2026-06-30,actual,spaces_total,52199,count,period_end,https://paraca.co.jp/mg/wp-content/uploads/2026/08/20260806_ir_tan3Q.pdf,2026-08-06,0,
+2026,FY,2025-10-01,2026-09-30,guidance_initial,revenue,18600,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/11/20251107_ir_tan29.pdf,2025-11-07,0,initial full-year guidance
+2026,FY,2025-10-01,2026-09-30,guidance_initial,operating_profit,3430,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/11/20251107_ir_tan29.pdf,2025-11-07,0,initial full-year guidance
+2026,FY,2025-10-01,2026-09-30,guidance_initial,ordinary_profit,3040,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/11/20251107_ir_tan29.pdf,2025-11-07,0,initial full-year guidance
+2026,FY,2025-10-01,2026-09-30,guidance_initial,net_income,2090,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2025/11/20251107_ir_tan29.pdf,2025-11-07,0,initial full-year guidance
+2026,FY,2025-10-01,2026-09-30,guidance_revised,revenue,18700,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/07/20260716_2.pdf,2026-07-16,0,revised guidance: ~¥870mn gain on sale of Sapporo fixed asset; new-lot start-up costs and heavy snow
+2026,FY,2025-10-01,2026-09-30,guidance_revised,operating_profit,3113,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/07/20260716_2.pdf,2026-07-16,0,revised guidance: ~¥870mn gain on sale of Sapporo fixed asset; new-lot start-up costs and heavy snow
+2026,FY,2025-10-01,2026-09-30,guidance_revised,ordinary_profit,2759,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/07/20260716_2.pdf,2026-07-16,0,revised guidance: ~¥870mn gain on sale of Sapporo fixed asset; new-lot start-up costs and heavy snow
+2026,FY,2025-10-01,2026-09-30,guidance_revised,net_income,2277,JPY_mn,cumulative,https://paraca.co.jp/mg/wp-content/uploads/2026/07/20260716_2.pdf,2026-07-16,0,revised guidance: ~¥870mn gain on sale of Sapporo fixed asset; new-lot start-up costs and heavy snow
