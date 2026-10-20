@@ -234,5 +234,6 @@ def _annual(rows):
             out[r["fiscal_year"]][r["metric"]] = r["value"]
             out[r["fiscal_year"]]["source_url"] = r["source_url"]
             out[r["fiscal_year"]]["release_date"] = r["release_date"]
-            out[r["fiscal_year"]].setdefault("derived_counts", bool(r["derived"]) if r["metric"].startswith(("lots", "spaces")) else False)
+            if r["metric"].startswith(("lots", "spaces")):
+                out[r["fiscal_year"]]["derived_counts"] = bool(r["derived"]) or out[r["fiscal_year"]].get("derived_counts", False)
     return [dict(v, fy=k) for k, v in sorted(out.items())]

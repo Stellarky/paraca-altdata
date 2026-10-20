@@ -48,3 +48,11 @@ Two things *can* be built with real data:
 4. **Dashboard** (React/TS, Cloudflare Pages): Overview, monthly-vacancy market cards, rent explorer + map, lot explorer, quality diagnostics, Official IR, and a Forecast lab that starts as "insufficient history". The utilization, busy-share and revenue-proxy sections ship **greyed out with the reason shown**.
 5. **Geographic matching**: the 16 Times markets with fixed centers and radius, showing only markets where real Paraca listings are found. Most will likely be thin, since the monthly inventory is concentrated in large facility car parks.
 6. **Upgrade path** (outside this build): ask Paraca IR for data access, or license iPosNet data. The schema already has slots for hourly status if either comes through.
+
+## Update: pilot results (20 Oct 2026)
+
+- The portal's search page carries **coordinates for every lot** (`data-lat` / `data-lng` on the MAP button), so no detail-page requests are needed.
+- A search needs a prefecture; `pageSize=50` is the largest page. A full national crawl = **50 requests**.
+- Pilot (run in a normal browser session at 3 s spacing, same parsing rules as the collector): **460 listings, 376 lots, 30 prefectures, 0 errors, 2 min 42 s**. Coordinates were present for 100% of lots and a vacancy flag for 98% of listings.
+- Coverage is about **14% of the 2,701 lots in operation** (IR, 30 Jun 2026).
+- Hourly availability: unchanged. No compliant source.
