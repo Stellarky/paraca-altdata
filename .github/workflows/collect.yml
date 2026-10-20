@@ -69,10 +69,12 @@ jobs:
           cd store
           git config user.name "paraca-collector[bot]"
           git config user.email "actions@users.noreply.github.com"
-          git switch --orphan snapshot
+          git checkout --orphan snapshot   # keeps the working tree (switch --orphan would empty it)
           git add -A
           git commit -qm "data: run ${{ github.run_id }} ($(date -u +%FT%TZ))"
-          for i in 1 2 3; do git push --force origin HEAD:data && break; sleep 10; done
+          ok=0
+          for i in 1 2 3; do git push --force origin HEAD:data && ok=1 && break; sleep 10; done
+          [ "$ok" = 1 ] || { echo "::error::could not push to data branch"; exit 1; }
 
       - name: Fail job if collection failed
         if: steps.collect.outcome == 'failure'
