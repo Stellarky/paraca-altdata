@@ -34,6 +34,8 @@ jobs:
       PARACA_MIN_INTERVAL: "3"
       PARACA_MAX_REQUESTS: "200"
       LOOP_SECONDS: "10500"
+      FIELD_CSV_URL: ${{ secrets.FIELD_CSV_URL }}              # optional: published Google Sheet (CSV) of field checks
+      TIMES_SNAPSHOTS_URL: ${{ vars.TIMES_SNAPSHOTS_URL }}     # optional: Times panel exports/parking_snapshots.csv
     steps:
       - uses: actions/checkout@v4
 

@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { lotStatus, Props, STATUS_COLORS, STATUS_LABEL } from "./common";
-import { Card, SortTable, Stat, Tip, Unavailable } from "../components/ui";
+import { useState } from "react";
+import { Card, SortTable, Stat, Tip } from "../components/ui";
 import { jst, median, num, pct, yen } from "../format";
 import MapView from "../sections/MapView";
 import Lots from "../sections/Lots";
@@ -32,8 +33,8 @@ export function AreaDetail(props: Props) {
         <Stat value={num(a.portal_lots)} label="lots with monthly listings" />
         <Stat value={num(a.owned_lots)} label={`owned lots (${num(a.owned_spaces)} spaces)`} />
         <Stat value={yen(a.median_car_rent)} label="median car rent / month" />
-        <Stat value="—" label="busy now (hourly)" off />
-        <Stat value="—" label="median ¥/hour" off />
+        {(() => { const t = p.status?.times?.areas[area]?.series; const l = t?.[t.length - 1];
+          return <Stat value={l ? pct(l.busy) : "—"} label={l ? "busy, nearby Times lots" : "busy now (see 空/混/満)"} off={!l} />; })()}
       </div>
       <div className="grid g2">
         <Card title="Waitlist share, last 7 days" note="Share of monthly listings shown 空き待ち at each hourly snapshot. Monthly vacancy moves slowly; flat stretches are normal.">
@@ -67,10 +68,6 @@ export function AreaDetail(props: Props) {
           ) : <p className="muted">No car monthly listings here.</p>}
         </Card>
       </div>
-      <div className="grid g2">
-        <Unavailable title="Busy share and estimated occupancy (hourly)" reason={d.summary.hourly.reason} metrics={["busy now", "full now", "est. occupancy", "when it is busy"]} />
-        <Unavailable title="Hourly prices and fee × occupancy" reason="Paraca's hourly tariffs are posted on site signs and on third-party sites that disallow automated collection. The fee parser and price-index logic are built and switch on with a permitted source." metrics={["median ¥/hour", "daily cap", "price index", "¥ per space-hour"]} />
-      </div>
       <LotMaps {...props} />
       <Card title="Interactive map" note="Every known Paraca lot: portal lots colored by their monthly status, owned lots from opening releases as blue rings. Click a lot for its listings or release.">
         <MapView d={d} />
@@ -88,14 +85,20 @@ export function AreaDetail(props: Props) {
 
 function LotMaps({ d, area, setArea }: Props) {
   const p = d.panel!;
+  const [wide, setWide] = useState(false);
+  const [grp, setGrp] = useState<"matched" | "paraca">(() => p.areas.find((a) => a.id === area)?.panel === "paraca" ? "paraca" : "matched");
   const lotById = new Map(d.lots.map((l) => [l.id, l]));
   const uni = d.universe?.lots ?? [];
   return (
-    <Card title="Lot map" note="Each known lot at its location within 2.5 km of the market centre, colored by its monthly listings' status; rings are owned lots without monthly listings. The cross is the centre; the dashed ring is 2.5 km. Click a market to select it.">
+    <Card title="Lot map" note={`Each known lot at its location within ${wide ? 5 : 2.5} km of the market centre, colored by its monthly listings' status; rings are owned lots without monthly listings. The cross is the centre; the dashed ring is ${wide ? 5 : 2.5} km. Click a market to select it.`}
+      right={<div className="controls">
+        <div className="seg">{([["matched", "Times markets"], ["paraca", "Paraca strongholds"]] as const).map(([k, l]) => <button key={k} className={grp === k ? "on" : ""} onClick={() => setGrp(k)}>{l}</button>)}</div>
+        <div className="seg">{[[false, "2.5 km"], [true, "5 km"]].map(([k, l]) => <button key={String(k)} className={wide === k ? "on" : ""} onClick={() => setWide(k as boolean)}>{l as string}</button>)}</div>
+      </div>}>
       <div className="minimaps">
-        {p.areas.slice(1).map((a) => {
-          const R = a.radius_km ?? 2.5, W = 200, k = (W / 2 - 8) / R;
-          const pts = uni.filter((u) => u.area === a.id).map((u) => {
+        {p.areas.slice(1).filter((a) => (a.panel ?? "matched") === grp).map((a) => {
+          const R = wide ? 5 : (a.radius_km ?? 2.5), W = 200, k = (W / 2 - 8) / R;
+          const pts = uni.filter((u) => wide ? u.area5 === a.id : u.area === a.id).map((u) => {
             const dx = (u.lng - a.lng!) * 111.32 * Math.cos((a.lat! * Math.PI) / 180), dy = (u.lat - a.lat!) * 110.57;
             const portal = u.sources.portal ? lotById.get(u.sources.portal) : undefined;
             return { x: W / 2 + dx * k, y: W / 2 - dy * k, st: portal ? lotStatus(portal) : "none", owned: !portal, n: u.spaces ?? portal?.listings.length ?? 2, name: u.name };
@@ -105,7 +108,7 @@ function LotMaps({ d, area, setArea }: Props) {
             <div key={a.id} className={"minimap" + (area === a.id ? " sel" : "")} onClick={() => setArea(a.id)} role="button" tabIndex={0}
                  onKeyDown={(e) => e.key === "Enter" && setArea(a.id)}>
               <b>{a.name}</b>
-              <div className="s">{pts.length ? `${full} of ${pts.length} lots fully or partly waitlisted` : "No known Paraca lots"}</div>
+              <div className="s">{pts.length ? `${pts.length} lots · ${full} fully or partly waitlisted` : "No known Paraca lots"}</div>
               <svg viewBox={`0 0 ${W} ${W}`} aria-label={`${a.name} lot map`}>
                 <circle cx={W / 2} cy={W / 2} r={W / 2 - 8} fill="none" stroke="var(--border-strong)" strokeDasharray="4 4" />
                 <path d={`M${W / 2 - 6} ${W / 2}h12M${W / 2} ${W / 2 - 6}v12`} stroke="var(--text-muted)" strokeWidth={1.5} />

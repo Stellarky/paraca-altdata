@@ -49,5 +49,5 @@ export function Delta({ now, prev }: { now: number | null; prev: number | null }
   return <span className={d > 0.0005 ? "up" : d < -0.0005 ? "down" : ""}>{d >= 0 ? "+" : "−"}{pct(Math.abs(d))} vs previous</span>;
 }
 
-export const AREA_OPTIONS = (d: Bundle) => [{ id: "all", label: "All areas · every listed lot" },
-  ...(d.panel?.areas.slice(1) ?? d.summary.areas).map((a: any) => ({ id: a.id, label: `${a.name} · ${a.ja}` }))];
+export const AREA_OPTIONS = (d: Bundle) => [{ id: "all", label: "All areas · every listed lot", group: "" },
+  ...(d.panel?.areas.slice(1) ?? []).map((a) => ({ id: a.id, label: `${a.name} · ${a.ja}`, group: a.panel === "paraca" ? "Paraca strongholds" : "Times-matched markets" }))];

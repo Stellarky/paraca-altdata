@@ -35,11 +35,18 @@ export interface Quality { generated_utc: string; flags: Record<string, number>;
   coverage: { portal_lots: number; official_lots: number | null; share_of_official: number | null; hourly_status_coverage: number | null }; biases: string[]; }
 
 export interface ULot { id: string; lat: number; lng: number; name: string | null; addr: string | null; spaces: number | null; opened: string | null;
-  sources: Record<string, string>; owned: boolean; area: string | null; flags: string; geo?: string | null; }
+  sources: Record<string, string>; owned: boolean; area: string | null; dist?: number | null; area5?: string | null; dist5?: number | null; flags: string; geo?: string | null; }
+export interface StatusPoint { t: string; busy: number | null; full: number | null; n: number }
+export interface StatusData {
+  field: null | { checks: number; lots: number; observers: number; latest: string; occupancy: number | null;
+    recent: { observed_utc: string; observer: string | null; lot_name: string | null; operator: string; status: string; occupied: number | null; total: number | null; area_id: string | null; notes: string | null }[];
+    by_area: Record<string, { busy: number | null; full: number | null; n: number }>; heat: { dow: number; hour: number; busy: number | null; n: number }[] };
+  times: null | { nearby_m: number; times_lots_near_paraca: number; areas: Record<string, { series: StatusPoint[] }> };
+}
 export interface Universe { lots: ULot[]; stats: Record<string, any>; owned_timeline: { m: string; n: number; spaces: number; cum_lots: number; cum_spaces: number }[];
   owned_totals: { d: string; lots: number; spaces: number }[]; osm_attribution: string; }
 
-export interface PArea { id: string; name: string; ja: string; type: string; lat?: number; lng?: number; radius_km?: number;
+export interface PArea { id: string; name: string; ja: string; type: string; panel?: string; lat?: number; lng?: number; radius_km?: number;
   listings: number; waitlist: number; open: number; noflag: number; waitlist_share: number | null; prev_waitlist_share: number | null;
   portal_lots: number; known_lots: number; owned_lots: number; owned_spaces: number; median_car_rent: number | null; car_listings: number;
   series: { t: string; w: number | null; n: number }[]; }
@@ -51,7 +58,7 @@ export interface Panel { generated_utc: string; snapshots_7d: number; runs_total
   decomp_avg: { total: number; spaces: number; yield_mix: number } | null; street_estimates: Record<string, string>[];
   owned: { per_year: { y: string; n: number; spaces: number; converted: number }[]; recent: { name: string; addr: string; spaces: number; opened: string; converted: boolean; url: string }[]; last12: number };
   coverage: { pref: string; portal: number; owned: number; known: number }[];
-  events: (Event & { lot_name: string | null; area: string | null })[]; universe_stats: Record<string, any>; }
+  events: (Event & { lot_name: string | null; area: string | null })[]; universe_stats: Record<string, any>; status?: StatusData; }
 
 export interface Bundle { summary: Summary; lots: Lot[]; events: Event[]; financials: Financials; forecast: Forecast; quality: Quality; universe: Universe | null; panel: Panel | null; source: string; }
 

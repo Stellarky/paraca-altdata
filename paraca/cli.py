@@ -196,6 +196,26 @@ def cmd_osm(args) -> int:
     return 0
 
 
+def cmd_status(args) -> int:
+    """Field checks + nearby Times status (see sources/status.py)."""
+    import json as _json
+    from .sources import status
+    from .export import build_universe
+    con = connect(Path(args.db))
+    lots = [dict(r) for r in con.execute("SELECT * FROM lots")]
+    universe, _ = build_universe(con, lots)
+    client = PoliteClient(max_requests=5, min_interval=1)
+    started = now_utc()
+    note = status.ingest_field(con, universe, status.load_field_rows(Path(args.field_csv), client))
+    try:
+        note.update(status.ingest_times(con, client))
+    except Exception as e:  # noqa: BLE001
+        note["times_error"] = str(e)[:200]
+    _record(con, "status", started, "ok", client, 0, note.get("field_rows", 0), note)
+    log.info("status sources: %s", _json.dumps(note, ensure_ascii=False))
+    return 0
+
+
 def cmd_export(args) -> int:
     from .export import export_all
     export_all(Path(args.db), Path(args.out), Path(args.financials))
@@ -215,6 +235,8 @@ def main(argv=None) -> int:
     o.add_argument("--max-requests", type=int, default=900); o.set_defaults(fn=cmd_owned)
     m = sub.add_parser("osm"); m.add_argument("--db", required=True); m.add_argument("--every-hours", type=float, default=168)
     m.add_argument("--force", action="store_true"); m.set_defaults(fn=cmd_osm)
+    st = sub.add_parser("status"); st.add_argument("--db", required=True); st.add_argument("--field-csv", default="data/field_checks.csv")
+    st.set_defaults(fn=cmd_status)
     e = sub.add_parser("export"); e.add_argument("--db", required=True); e.add_argument("--out", required=True)
     e.add_argument("--financials", default="data/financials.csv"); e.set_defaults(fn=cmd_export)
     a = p.parse_args(argv)

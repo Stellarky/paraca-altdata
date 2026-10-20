@@ -22,6 +22,7 @@ while :; do
   python -m paraca.cli collect --db store/paraca.sqlite || echo "::warning::portal collection partial"
   python -m paraca.cli owned   --db store/paraca.sqlite --every-hours 24 || echo "::warning::owned releases failed"
   python -m paraca.cli osm     --db store/paraca.sqlite --every-hours 168 || echo "::warning::osm failed"
+  python -m paraca.cli status  --db store/paraca.sqlite || echo "::warning::status sources failed"
   python -m paraca.cli export  --db store/paraca.sqlite --out store
   publish "$i"
   echo "::endgroup::"

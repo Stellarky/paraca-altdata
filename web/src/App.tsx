@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { Bundle, loadAll, REPO } from "./data";
 import { AREA_OPTIONS } from "./panel/common";
-import { AreasNow, Hero } from "./panel/Top";
+import { AreasNow, Hero, Strongholds } from "./panel/Top";
+import { Traffic } from "./panel/Traffic";
 import { ByType, Official, Owned } from "./panel/Middle";
 import { AreaDetail } from "./panel/Bottom";
 
-const NAV = [["areas", "Areas"], ["bytype", "By type"], ["official", "Official figures"], ["owned", "Owned lots"], ["detail", "Area detail"], ["lots", "Lots"]];
+const NAV = [["areas", "Areas"], ["traffic", "空/混/満"], ["bytype", "By type"], ["official", "Official figures"], ["owned", "Owned lots"], ["detail", "Area detail"], ["lots", "Lots"]];
 
 function ThemeToggle() {
   const [t, setT] = useState<string>(() => { try { return localStorage.getItem("theme") || "auto"; } catch { return "auto"; } });
@@ -43,7 +44,10 @@ export default function App() {
           {data && (
             <label className="picker">Area
               <select value={area} onChange={(e) => { setArea(e.target.value); document.getElementById("detail")?.scrollIntoView(); }}>
-                {AREA_OPTIONS(data).map((o) => <option key={o.id} value={o.id}>{o.label}</option>)}
+                {(() => { const o = AREA_OPTIONS(data); return <>
+                  <option value="all">{o[0].label}</option>
+                  {["Times-matched markets", "Paraca strongholds"].map((g) => <optgroup key={g} label={g}>{o.filter((x) => x.group === g).map((x) => <option key={x.id} value={x.id}>{x.label}</option>)}</optgroup>)}
+                </>; })()}
               </select>
             </label>)}
           <ThemeToggle />
@@ -56,6 +60,8 @@ export default function App() {
         {props && data!.panel && <>
           <Hero {...props} />
           <AreasNow {...props} />
+          <Strongholds {...props} />
+          <Traffic {...props} />
           <ByType {...props} />
           <Official {...props} />
           <Owned {...props} />

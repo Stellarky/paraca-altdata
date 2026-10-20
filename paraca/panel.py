@@ -25,6 +25,9 @@ AREA_TYPE = {
     "kyoto_kawaramachi": "Tourist", "setagaya_sangenjaya": "Residential", "yokohama_station": "Commuter hub",
     "omiya_station": "Commuter hub", "funabashi_station": "Commuter hub", "tachikawa": "Suburban", "koshigaya": "Suburban",
     "sendai": "Regional city", "sapporo": "Regional city", "hiroshima": "Regional city",
+    "niigata_central": "Regional city", "sapporo_east": "Residential", "aomori": "Regional city",
+    "kameido_kinshicho": "Shopping and nightlife", "akita": "Regional city", "bunkyo_ueno": "Residential",
+    "kofu": "Regional city", "gifu": "Regional city", "osaka_east": "Residential", "himeji": "Regional city",
 }
 
 
@@ -105,10 +108,10 @@ def build(con, fin_quarters: list[dict], universe: list[dict], ustats: dict, str
                   **area_block("all", all_sel), "series": series["all"]})
     for a in config.AREAS:
         sel = [l for l in cur if area_of_listing.get(l) == a.area_id]
-        areas.append({"id": a.area_id, "name": a.name.split(" (")[0], "ja": a.name_ja, "type": AREA_TYPE.get(a.area_id, ""),
+        areas.append({"id": a.area_id, "name": a.name.split(" (")[0], "ja": a.name_ja, "type": AREA_TYPE.get(a.area_id, ""), "panel": a.panel,
                       "lat": a.lat, "lng": a.lng, "radius_km": a.radius_km, **area_block(a.area_id, sel), "series": series[a.area_id]})
 
-    ranked = [a for a in areas[1:] if a["listings"] >= 3 and a["waitlist_share"] is not None]
+    ranked = [a for a in areas[1:] if a.get("panel") == "matched" and a["listings"] >= 3 and a["waitlist_share"] is not None]
     busiest = max(ranked, key=lambda a: a["waitlist_share"]) if ranked else None
     quietest = min(ranked, key=lambda a: a["waitlist_share"]) if ranked else None
 
@@ -194,7 +197,8 @@ def build(con, fin_quarters: list[dict], universe: list[dict], ustats: dict, str
         l = lots.get(e["lot_id"], {})
         e["lot_name"], e["area"] = l.get("lot_name"), l.get("area_id")
 
-    return {"generated_utc": now.isoformat(), "snapshots_7d": len(recent), "runs_total": len(runs),
+    from .sources.status import status_panel
+    return {"status": status_panel(con, universe), "generated_utc": now.isoformat(), "snapshots_7d": len(recent), "runs_total": len(runs),
             "last_snapshot": runs[-1]["started_utc"] if runs else None,
             "areas": areas, "busiest": busiest and {"id": busiest["id"], "name": busiest["name"], "w": busiest["waitlist_share"]},
             "quietest": quietest and {"id": quietest["id"], "name": quietest["name"], "w": quietest["waitlist_share"]},

@@ -283,6 +283,8 @@ def build_universe(con, lots: list[dict]) -> tuple[list[dict], dict]:
     for i, c in enumerate(clusters):
         c["id"] = f"u{i:05d}"
         c["area"], c["dist"] = assign_area(c["lat"], c["lng"])
+        wide = [type(a)(a.area_id, a.name, a.name_ja, a.lat, a.lng, config.WIDE_RADIUS_KM, a.panel) for a in config.AREAS]
+        c["area5"], c["dist5"] = assign_area(c["lat"], c["lng"], wide)
         c["owned"] = "owned_pr" in c["sources"]
     by_src = Counter(s for c in clusters for s in c["sources"])
     owned_rows = con.execute("SELECT COUNT(*), SUM(spaces), SUM(latitude IS NOT NULL) FROM owned_lots WHERE kind='opened'").fetchone()

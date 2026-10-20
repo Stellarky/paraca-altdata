@@ -20,15 +20,35 @@ export function Hero({ d }: Props) {
   );
 }
 
-export function AreasNow({ d, area, setArea }: Props) {
-  const p = d.panel!;
-  const go = (id: string) => { setArea(id); document.getElementById("detail")?.scrollIntoView(); };
+export function AreasNow(props: Props) {
+  const p = props.d.panel!;
   return (
     <section className="sec" id="areas">
       <h2>Areas now</h2>
       <p className="sec-intro">Waitlist share = monthly listings shown 空き待ち, out of listings that show a flag. Same 16 markets as the Times panel, each 2.5 km around its centre. Lines show the last 7 days on one shared scale.</p>
+      <Cards {...props} list={p.areas.filter((a) => a.id === "all" || a.panel !== "paraca")} />
+    </section>
+  );
+}
+
+export function Strongholds(props: Props) {
+  const p = props.d.panel!;
+  const list = p.areas.filter((a) => a.panel === "paraca");
+  if (!list.length) return null;
+  return (
+    <section className="sec" id="strongholds">
+      <h2>Paraca strongholds</h2>
+      <p className="sec-intro">A second panel chosen by Paraca's own footprint: the ten densest clusters of known Paraca lots outside the Times markets, each 2.5 km around the cluster's centre. Most are regional cities where Paraca is strong and Times is not the reference.</p>
+      <Cards {...props} list={list} />
+    </section>
+  );
+}
+
+function Cards({ area, setArea, list }: Props & { list: import("../data").PArea[] }) {
+  const go = (id: string) => { setArea(id); document.getElementById("detail")?.scrollIntoView(); };
+  return (
       <div className="areas">
-        {p.areas.map((a) => (
+        {list.map((a) => (
           <button key={a.id} type="button" className={"card acard" + (a.id === "all" ? " total" : "") + (area === a.id ? " sel" : "") + (a.listings ? "" : " empty")} onClick={() => go(a.id)}>
             <span className="nm">{a.name}</span>
             <span className="ja">{a.ja}</span>
@@ -51,6 +71,5 @@ export function AreasNow({ d, area, setArea }: Props) {
           </button>
         ))}
       </div>
-    </section>
   );
 }

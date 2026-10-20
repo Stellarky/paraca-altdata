@@ -15,7 +15,10 @@ compared with it through shared exports, without sharing collectors or GitHub Ac
 |---|---|---|---|
 | `sweet.paraca.co.jp` (Paraca's monthly-parking search) | lot name, address, lat/lng, listing id, vehicle & contract type, monthly rent, deposit, key money, equipment, size notes, vacancy flag (申込可能 / 空き待ち) | hourly batch, ~50 requests at ≥3 s spacing | ✅ live |
 | Paraca IR 決算短信 | revenue, OP, ordinary, NI, revenue & GP by leased/owned, lots & spaces by type, guidance | per release (hand-verified CSV) | ✅ FY2022–FY2026 Q3 |
-| Hourly availability / hourly fees | status, ¥/time unit, caps | — | ⊘ no compliant source; schema ready (`hourly_observations`) |
+| Owned-lot opening releases (paraca.co.jp, 2008–) | name, address, spaces, open date, stated owned totals | daily check | ✅ 245 openings |
+| 空/混/満 — field checks | status or occupied/total, fee text | hourly read of `data/field_checks.csv` / `FIELD_CSV_URL` | ⏳ ready, see docs/field_check.md |
+| 空/混/満 — nearby Times lots | busy/full share of Times lots ≤300 m from Paraca lots | hourly, `TIMES_SNAPSHOTS_URL` | ⏳ ready, needs the Times export URL |
+| 空/混/満 — Paraca's own signs | hourly status | — | ⊘ no permitted source (iPosNet licence requested) |
 
 Pilot on 2026-10-20: **460 listings / 376 lots / 30 prefectures from 50 requests, 0 errors, 2.7 minutes.**
 

@@ -74,5 +74,22 @@ AREAS: list[Area] = [
     Area("hiroshima", "Hiroshima", "広島", 34.3976, 132.4751, DEFAULT_RADIUS_KM),
 ]
 
+# Second panel: Paraca's own strongholds. Centres are the mean location of the densest
+# clusters of known Paraca lots (computed 2026-10-20 from portal + owned-release lots,
+# excluding the matched markets), so these markets are chosen by Paraca's footprint.
+AREAS += [
+    Area("niigata_central", "Niigata (Furumachi/Bandai)", "新潟市中央区", 37.9187, 139.0497, DEFAULT_RADIUS_KM, "paraca"),
+    Area("sapporo_east", "Sapporo East (Shiroishi/Toyohira)", "札幌 白石・豊平", 43.0407, 141.4016, DEFAULT_RADIUS_KM, "paraca"),
+    Area("aomori", "Aomori", "青森市中心部", 40.8264, 140.7455, DEFAULT_RADIUS_KM, "paraca"),
+    Area("kameido_kinshicho", "Kameido / Kinshicho", "亀戸・錦糸町", 35.6905, 139.8175, DEFAULT_RADIUS_KM, "paraca"),
+    Area("akita", "Akita", "秋田市中心部", 39.7152, 140.1155, DEFAULT_RADIUS_KM, "paraca"),
+    Area("bunkyo_ueno", "Bunkyo / Ueno", "文京・上野", 35.7263, 139.7598, DEFAULT_RADIUS_KM, "paraca"),
+    Area("kofu", "Kofu", "甲府市中心部", 35.6610, 138.5686, DEFAULT_RADIUS_KM, "paraca"),
+    Area("gifu", "Gifu", "岐阜市中心部", 35.4191, 136.7562, DEFAULT_RADIUS_KM, "paraca"),
+    Area("osaka_east", "Osaka East (Tamatsu/Ikuno)", "東成・生野", 34.6651, 135.5482, DEFAULT_RADIUS_KM, "paraca"),
+    Area("himeji", "Himeji", "姫路駅周辺", 34.8310, 134.6903, DEFAULT_RADIUS_KM, "paraca"),
+]
+WIDE_RADIUS_KM = 5.0   # optional wider view on the lot maps
+
 # Minimum number of distinct lots before a market is shown on the dashboard.
 MIN_LOTS_TO_DISPLAY = int(os.environ.get("PARACA_MIN_LOTS", "1"))
