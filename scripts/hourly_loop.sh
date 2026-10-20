@@ -34,6 +34,11 @@ while nxt <= t + 60: nxt += 3600
 print(int(nxt - t))
 PY
 )
+  # restart the chain on new code: if main moved since this job started, stop now
+  if [ -n "${GITHUB_SHA:-}" ] && git fetch -q --depth=1 origin main 2>/dev/null \
+     && [ "$(git rev-parse FETCH_HEAD)" != "$GITHUB_SHA" ]; then
+    echo "main changed; ending this job so the next one runs the new code"; break
+  fi
   # stop if the next iteration would not finish inside the budget (collection takes ~4 min)
   if [ $((now + next + 600)) -gt "$END" ] || [ "${ONE_SHOT:-0}" = 1 ]; then break; fi
   echo "sleeping ${next}s until next :$MINUTE"

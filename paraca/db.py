@@ -46,6 +46,9 @@ CREATE TABLE IF NOT EXISTS owned_lots(
   pdf_url TEXT, seq INTEGER, release_date TEXT, kind TEXT, lot_name TEXT, address TEXT, spaces INTEGER,
   open_date TEXT, latitude REAL, longitude REAL, geo_title TEXT, geo_quality TEXT, flags TEXT, raw TEXT,
   PRIMARY KEY(pdf_url, seq));
+CREATE TABLE IF NOT EXISTS meta(key TEXT PRIMARY KEY, value TEXT);
+CREATE TABLE IF NOT EXISTS geocode_cache(
+  address TEXT PRIMARY KEY, latitude REAL, longitude REAL, title TEXT, quality TEXT, source TEXT, fetched_utc TEXT);
 CREATE TABLE IF NOT EXISTS osm_lots(
   osm_id TEXT PRIMARY KEY, name TEXT, operator TEXT, latitude REAL, longitude REAL, capacity INTEGER,
   tags TEXT, first_seen_utc TEXT, last_seen_utc TEXT);
@@ -64,6 +67,11 @@ def connect(path: Path) -> sqlite3.Connection:
     con = sqlite3.connect(path)
     con.row_factory = sqlite3.Row
     con.executescript(SCHEMA)
+    for col in ("owned_total_lots INTEGER", "owned_total_spaces INTEGER"):     # added 2026-10-20
+        try:
+            con.execute(f"ALTER TABLE owned_releases ADD COLUMN {col}")
+        except sqlite3.OperationalError:
+            pass
     return con
 
 

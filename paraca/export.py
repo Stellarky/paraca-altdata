@@ -182,7 +182,9 @@ def export_all(db: Path, out: Path, fin_csv: Path) -> None:
     })
     _j(web / "events.json", events[:500])
     universe, ustats = build_universe(con, lots)
-    _j(web / "universe.json", {"lots": universe, "stats": ustats, "owned_timeline": owned_timeline(con),
+    totals = [{"d": r[0], "lots": r[1], "spaces": r[2]} for r in con.execute(
+        "SELECT release_date, owned_total_lots, owned_total_spaces FROM owned_releases WHERE owned_total_lots IS NOT NULL ORDER BY release_date")]
+    _j(web / "universe.json", {"lots": universe, "stats": ustats, "owned_timeline": owned_timeline(con), "owned_totals": totals,
         "osm_attribution": "© OpenStreetMap contributors (ODbL)"})
     _w(out / "exports/known_lots.csv", [{"operator": config.OPERATOR, "universe_id": c["id"], "lot_name": c["name"], "address": c["addr"],
         "latitude": c["lat"], "longitude": c["lng"], "area_id": c["area"], "capacity": c["spaces"], "opened": c["opened"],
@@ -245,10 +247,11 @@ def build_universe(con, lots: list[dict]) -> tuple[list[dict], dict]:
         if l["active"] and l["latitude"]:
             recs.append({"src": "portal", "name": l["lot_name"], "lat": l["latitude"], "lng": l["longitude"], "ref": l["lot_id"],
                          "addr": l["address"], "spaces": None, "date": None})
-    for r in con.execute("SELECT * FROM owned_lots WHERE kind='opened'"):
+    for r in con.execute("SELECT * FROM owned_lots WHERE kind='opened' ORDER BY open_date"):
         if r["latitude"]:
             recs.append({"src": "owned_pr", "name": r["lot_name"], "lat": r["latitude"], "lng": r["longitude"], "ref": r["pdf_url"],
-                         "addr": r["address"], "spaces": r["spaces"], "date": r["open_date"] or r["release_date"], "geo": r["geo_quality"]})
+                         "addr": r["address"], "spaces": r["spaces"], "date": r["open_date"] or r["release_date"], "geo": r["geo_quality"],
+                         "flags": r["flags"]})
     for r in con.execute("SELECT * FROM osm_lots"):
         if r["latitude"]:
             recs.append({"src": "osm", "name": r["name"], "lat": r["latitude"], "lng": r["longitude"], "ref": r["osm_id"],
@@ -267,9 +270,12 @@ def build_universe(con, lots: list[dict]) -> tuple[list[dict], dict]:
             hit["spaces"] = hit["spaces"] or rec["spaces"]
             hit["opened"] = hit["opened"] or rec["date"]
             hit["addr"] = hit["addr"] or rec["addr"]
+            hit["flags"] = hit.get("flags") or rec.get("flags") or ""
+            if rec.get("geo"):
+                hit["geo"] = rec["geo"]
             continue
         c = {"lat": rec["lat"], "lng": rec["lng"], "name": rec["name"], "addr": rec["addr"], "spaces": rec["spaces"],
-             "opened": rec["date"], "sources": {rec["src"]: rec["ref"]}, "geo": rec.get("geo")}
+             "opened": rec["date"], "sources": {rec["src"]: rec["ref"]}, "geo": rec.get("geo"), "flags": rec.get("flags") or ""}
         clusters.append(c)
         grid.setdefault(key, []).append(c)
     for i, c in enumerate(clusters):
@@ -278,12 +284,18 @@ def build_universe(con, lots: list[dict]) -> tuple[list[dict], dict]:
         c["owned"] = "owned_pr" in c["sources"]
     by_src = Counter(s for c in clusters for s in c["sources"])
     owned_rows = con.execute("SELECT COUNT(*), SUM(spaces), SUM(latitude IS NOT NULL) FROM owned_lots WHERE kind='opened'").fetchone()
+    latest_total = con.execute("""SELECT release_date, owned_total_lots, owned_total_spaces FROM owned_releases
+                                  WHERE owned_total_lots IS NOT NULL ORDER BY release_date DESC LIMIT 1""").fetchone()
     stats = {"union_lots": len(clusters), "by_source": dict(by_src),
              "multi_source": sum(len(c["sources"]) > 1 for c in clusters),
              "owned_pr_rows": owned_rows[0], "owned_pr_spaces": owned_rows[1], "owned_pr_geocoded": owned_rows[2],
              "owned_releases": con.execute("SELECT COUNT(*) FROM owned_releases").fetchone()[0],
              "owned_release_errors": con.execute("SELECT COUNT(*) FROM owned_releases WHERE error IS NOT NULL").fetchone()[0],
-             "osm_rows": con.execute("SELECT COUNT(*) FROM osm_lots").fetchone()[0]}
+             "osm_rows": con.execute("SELECT COUNT(*) FROM osm_lots").fetchone()[0],
+             "owned_converted": con.execute("SELECT COUNT(*) FROM owned_lots WHERE flags LIKE '%converted_from_leased%'").fetchone()[0],
+             "owned_total_stated": latest_total[1] if latest_total else None,
+             "owned_total_spaces_stated": latest_total[2] if latest_total else None,
+             "owned_total_asof": latest_total[0] if latest_total else None}
     return clusters, stats
 
 

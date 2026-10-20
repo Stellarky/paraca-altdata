@@ -34,7 +34,12 @@ export interface Forecast {
 export interface Quality { generated_utc: string; flags: Record<string, number>; runs: Run[]; requests_total: number; failed_runs: number;
   coverage: { portal_lots: number; official_lots: number | null; share_of_official: number | null; hourly_status_coverage: number | null }; biases: string[]; }
 
-export interface Bundle { summary: Summary; lots: Lot[]; events: Event[]; financials: Financials; forecast: Forecast; quality: Quality; source: string; }
+export interface ULot { id: string; lat: number; lng: number; name: string | null; addr: string | null; spaces: number | null; opened: string | null;
+  sources: Record<string, string>; owned: boolean; area: string | null; flags: string; geo?: string | null; }
+export interface Universe { lots: ULot[]; stats: Record<string, any>; owned_timeline: { m: string; n: number; spaces: number; cum_lots: number; cum_spaces: number }[];
+  owned_totals: { d: string; lots: number; spaces: number }[]; osm_attribution: string; }
+
+export interface Bundle { summary: Summary; lots: Lot[]; events: Event[]; financials: Financials; forecast: Forecast; quality: Quality; universe: Universe | null; source: string; }
 
 export const REPO = "https://github.com/Stellarky/paraca-altdata";
 const DEFAULT_BASE = "https://raw.githubusercontent.com/Stellarky/paraca-altdata/data/web/";
@@ -42,7 +47,7 @@ const DEFAULT_BASE = "https://raw.githubusercontent.com/Stellarky/paraca-altdata
 declare global { interface Window { __PARACA_DATA__?: Omit<Bundle, "source">; } }
 
 export async function loadAll(): Promise<Bundle> {
-  if (window.__PARACA_DATA__) return { ...window.__PARACA_DATA__, source: "embedded snapshot" };
+  if (window.__PARACA_DATA__) return { ...window.__PARACA_DATA__, universe: window.__PARACA_DATA__.universe ?? null, source: "embedded snapshot" };
   const base = (import.meta.env.VITE_DATA_BASE as string | undefined) || DEFAULT_BASE;
   const bust = `?t=${Math.floor(Date.now() / 300000)}`; // refresh at most every 5 min
   const get = async (f: string) => {
@@ -52,5 +57,6 @@ export async function loadAll(): Promise<Bundle> {
   };
   const [summary, lots, events, financials, forecast, quality] = await Promise.all(
     ["summary.json", "lots.json", "events.json", "financials.json", "forecast.json", "quality.json"].map(get));
-  return { summary, lots, events, financials, forecast, quality, source: base };
+  const universe = await get("universe.json").catch(() => null);   // optional: added 2026-10-20
+  return { summary, lots, events, financials, forecast, quality, universe, source: base };
 }

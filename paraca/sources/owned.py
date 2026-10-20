@@ -19,6 +19,7 @@ from ..http import PoliteClient
 
 log = logging.getLogger(__name__)
 
+PARSER_VERSION = "2"   # bump to force re-parsing of stored release text
 PR_LIST = "https://paraca.co.jp/news/pr/"
 PR_PAGE = "https://paraca.co.jp/news/pr/page/{n}/"
 TITLE_RE = re.compile(r"保有駐車場|自社物件|自社保有")
@@ -102,37 +103,76 @@ def pdf_text(data: bytes) -> str:
         return "\n".join(parts)
 
 
+BLOCK_RE = re.compile(
+    r"(駐車場名|駐輪場名)\s*[:：]\s*(?P<name>[^\n]+?)\s*\n"
+    r"(?:[^\n]*\n){0,2}?"
+    r"所\s*在\s*地\s*[:：]\s*(?P<addr>[^\n]+?)\s*\n"
+    r"(?:[^\n]*\n){0,2}?"
+    r"車\s*室\s*数\s*[:：]\s*(?P<sp>[\d,]+)\s*(?:車室|台)?(?=(?P<tail>[^\n]*(?:\n[^\n]*){0,2}))")
+TOTAL_RE = re.compile(r"保有駐車場(?:を|は)?\s*([\d,]+)\s*件\s*([\d,]+)\s*車室")
+CUM_RE = re.compile(r"累計で\s*([\d,]+)\s*件\s*([\d,]+)\s*車室")
+
+
+def _strip_brand(name: str) -> str:
+    name = re.sub(r"^パラカ\s*", "", name.strip())
+    return re.sub(r"\s+", "", name)
+
+
 def parse_release_text(text: str, release_date: str | None = None) -> list[OwnedLot]:
-    """Find lot rows: each must carry a prefecture-led address. Name = text just
-    before the address on the same line (or the previous line); spaces and
-    dates are read from the same line / next line."""
-    lines = [n(l).strip() for l in text.splitlines() if n(l).strip()]
+    """Parse the 《…概要》 blocks used in every release since 2008:
+
+        駐車場名 ：<name>
+        所 在 地 ：<address>
+        車 室 数 ：<n>車室
+        [※既存賃借駐車場を取得]   (existing leased lot converted to owned)
+
+    Open dates come from the summary table row that starts with the lot name
+    (last date on that row); releases before ~2012 have no dates, so the
+    release month is used and flagged.
+    """
+    t = n(text)
+    t = re.sub(r"\n\s*\d+\s*/\s*\d+\s*\n", "\n", t)          # page footers "1 / 2"
     out: list[OwnedLot] = []
-    section = "opened"
-    for i, line in enumerate(lines):
-        if "取得" in line and "オープン" not in line and len(line) < 30:
-            section = "acquired"
-        elif "オープン" in line and len(line) < 30:
-            section = "opened"
-        m = ADDR_RE.search(line)
-        if not m:
-            continue
-        # skip the company's own head-office address and letterhead lines
-        if "愛宕" in m.group(0) and "港区" in m.group(0):
-            continue
-        ctx = line + " " + (lines[i + 1] if i + 1 < len(lines) and not ADDR_RE.search(lines[i + 1]) else "")
-        before = line[: m.start()].strip(" :：・|")
-        name = before or (lines[i - 1] if i > 0 and not ADDR_RE.search(lines[i - 1]) and len(lines[i - 1]) < 40 else None)
-        after = line[m.end():] + " " + ctx[len(line):]
-        sp = SPACES_RE.search(after) or SPACES_RE.search(before)
-        lot = OwnedLot(lot_name=(name or None), address=m.group(0), spaces=int(sp.group(1)) if sp else None,
-                       open_date=parse_date(after) or parse_date(before), kind=section, raw=ctx[:300])
-        if lot.spaces is None:
-            lot.flags.append("no_spaces")
-        if lot.lot_name is None:
-            lot.flags.append("no_name")
+    rows = t.splitlines()
+    for m in BLOCK_RE.finditer(t):
+        name = _strip_brand(m.group("name"))
+        addr = re.sub(r"\s+", "", m.group("addr"))
+        head = t[: m.start()]
+        heading = head[head.rfind("《"):] if "《" in head else ""
+        kind = "acquired" if ("取得" in heading and "オープン" not in heading) else "opened"
+        lot = OwnedLot(lot_name=name or None, address=addr, spaces=int(m.group("sp").replace(",", "")),
+                       open_date=None, kind=kind, raw=m.group(0)[:300])
+        tail = m.group("tail")
+        nxt = BLOCK_RE.search(tail)
+        tail = tail[: nxt.start()] if nxt else tail
+        if "既存賃借駐車場を取得" in tail or "賃借駐車場から" in tail:
+            lot.flags.append("converted_from_leased")
+        if m.group(1) == "駐輪場名":
+            lot.flags.append("bicycle")
+        # open date from the summary-table row for this name
+        for row in rows:
+            r = re.sub(r"\s+", "", row)
+            if name and r.startswith(name) and "車室" in r or (name and r.startswith(name) and DATE_RE.search(r)):
+                dates = [parse_date(x.group(0)) for x in DATE_RE.finditer(n(row))]
+                if dates:
+                    lot.open_date = dates[-1]
+                    if len(dates) > 1:
+                        lot.flags.append("acq_" + dates[0])
+                    break
+        if lot.open_date is None:
+            lot.flags.append("date_from_release")
+            lot.open_date = release_date
         out.append(lot)
     return out
+
+
+def parse_totals(text: str) -> tuple[int | None, int | None]:
+    """Owned-portfolio total stated in the release (lots, spaces)."""
+    t = n(text)
+    m = TOTAL_RE.search(t) or CUM_RE.search(t)
+    if not m:
+        return None, None
+    return int(m.group(1).replace(",", "")), int(m.group(2).replace(",", ""))
 
 
 # --------------------------------------------------------------------- geocoding

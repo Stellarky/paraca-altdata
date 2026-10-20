@@ -17,7 +17,8 @@ export default function Overview({ d }: { d: Bundle }) {
         monthly-contract listings (vacancy flag and rent), plus the official results disclosed in its 決算短信.
       </p>
       <div className="grid g4">
-        <Kpi label="Monitored lots" value={num(s.lots)} foot={<>{pct(coverage)} of {num(s.official_lots_total)} lots in operation (IR, {s.official_asof})</>} />
+        <Kpi label="Known Paraca lots" value={num(d.universe?.stats.union_lots ?? s.lots)}
+          foot={<>{pct((d.universe?.stats.union_lots ?? s.lots) / (s.official_lots_total || 1))} of {num(s.official_lots_total)} in operation · {num(s.lots)} with monthly listings{d.universe ? `, ${num(d.universe.stats.by_source.owned_pr ?? 0)} owned (releases)` : ""}</>} />
         <Kpi label="Active listings" value={num(s.listings)} foot={`${num(s.car_monthly_listings)} car monthly · ${s.prefectures} prefectures`} />
         <Kpi label="Monthly listings open" value={pct(s.open_share)} foot="Share of flagged listings with 申込可能 (can contract now)" />
         <Kpi label="Median car monthly rent" value={yen(s.median_car_rent)} foot="Tax incl., car / 月極 listings" />

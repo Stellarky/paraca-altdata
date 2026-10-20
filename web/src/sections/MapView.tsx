@@ -15,6 +15,8 @@ export default function MapView({ d }: { d: Bundle }) {
   const [veh, setVeh] = useState("all");
   const [st, setSt] = useState("all");
   const [showAreas, setShowAreas] = useState(true);
+  const [showOwned, setShowOwned] = useState(true);
+  const ownedOnly = useMemo(() => (d.universe?.lots ?? []).filter((u) => u.owned && !u.sources.portal), [d]);
   const lots = useMemo(() => d.lots.filter((l) => l.lat && l.lng)
     .map((l) => ({ ...l, listings: veh === "all" ? l.listings : l.listings.filter((x) => x.veh === veh) }))
     .filter((l) => l.listings.length)
@@ -30,12 +32,14 @@ export default function MapView({ d }: { d: Bundle }) {
         <div className="seg">{[["all", "All"], ["open", "Open"], ["mixed", "Mixed"], ["waitlist", "Waitlist"], ["unknown", "No flag"]].map(([k, l]) =>
           <button key={k} className={st === k ? "on" : ""} onClick={() => setSt(k)}>{l}</button>)}</div>
         <button className={showAreas ? "on" : ""} onClick={() => setShowAreas(!showAreas)}>Market radii</button>
-        <span className="muted small">{lots.length} lots shown</span>
+        {d.universe && <button className={showOwned ? "on" : ""} onClick={() => setShowOwned(!showOwned)}>Owned lots (releases)</button>}
+        <span className="muted small">{lots.length} portal lots{showOwned && ownedOnly.length ? ` + ${ownedOnly.length} owned lots` : ""} shown</span>
       </div>
       <div className="legend-row">
         {Object.entries({ open: "All listings open", mixed: "Some open", waitlist: "All waitlisted", unknown: "No vacancy flag" }).map(([k, l]) =>
           <span key={k}><span className="dot" style={{ background: COLORS[k], width: 10, height: 10 }} /> {l}</span>)}
-        <span className="muted">· marker size ∝ number of listings (capacity is not published)</span>
+        {d.universe && <span><span className="dot" style={{ background: "transparent", border: "2px solid #2a78d6", width: 10, height: 10 }} /> Owned lot from opening releases (no status)</span>}
+        <span className="muted">· marker size ∝ listings (portal) or spaces (owned)</span>
       </div>
       <div className="mapbox">
         <MapContainer center={[35.68, 139.75]} zoom={6} scrollWheelZoom style={{ height: "100%", width: "100%" }} preferCanvas>
@@ -47,6 +51,17 @@ export default function MapView({ d }: { d: Bundle }) {
               pathOptions={{ color: "#2a78d6", weight: 1, dashArray: "4 4", fillOpacity: a.lots ? 0.06 : 0.02 }}>
               <Tooltip>{a.name} · {a.lots} lots</Tooltip>
             </Circle>))}
+          {showOwned && ownedOnly.map((u) => (
+            <CircleMarker key={u.id} center={[u.lat, u.lng]} radius={3 + Math.min(Math.sqrt(u.spaces ?? 4), 8)}
+              pathOptions={{ color: "#2a78d6", weight: 2, fillColor: "#2a78d6", fillOpacity: 0.12 }}>
+              <Popup>
+                <b>{u.name ?? "Owned lot"}</b><br /><span style={{ color: "#85837c" }}>{u.addr}</span><br />
+                Owned · {u.spaces ?? "—"} spaces · opened {u.opened ?? "—"}
+                {u.flags.includes("converted_from_leased") && <><br />Converted from a leased lot</>}
+                {u.geo === "approx" && <><br /><span style={{ color: "#85837c" }}>Location approximate (address geocoded to block level)</span></>}
+                <br /><a href={u.sources.owned_pr} target="_blank" rel="noreferrer">Opening release (PDF) ↗</a>
+              </Popup>
+            </CircleMarker>))}
           {lots.map((l) => (
             <CircleMarker key={l.id} center={[l.lat!, l.lng!]} radius={4 + Math.min(l.listings.length, 6) * 1.2}
               pathOptions={{ color: dark ? "#1a1a19" : "#fcfcfb", weight: 1.5, fillColor: COLORS[l.status], fillOpacity: 0.9 }}>

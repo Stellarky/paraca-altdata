@@ -85,6 +85,25 @@ export default function Official({ d }: { d: Bundle }) {
             with Park24 with care: Park24 consolidates mobility and overseas businesses and reports a different fiscal year.</p>
         </Card>
       </div>
+      {d.universe && d.universe.owned_totals.length > 0 && (
+        <Card title="Owned portfolio since 2008" note="Owned lots as stated in each monthly opening release (paraca.co.jp)">
+          <div style={{ height: 260 }}>
+            <ResponsiveContainer>
+              <LineChart data={d.universe.owned_totals} margin={{ right: 16 }}>
+                <CartesianGrid vertical={false} />
+                <XAxis dataKey="d" tickLine={false} axisLine={false} minTickGap={40} tickFormatter={(v: string) => v.slice(0, 4)} />
+                <YAxis tickLine={false} axisLine={false} width={40} />
+                <Tooltip content={<Tip fmt={(v: number) => num(v)} />} />
+                <Line dataKey="lots" name="Owned lots" stroke="var(--series-2)" strokeWidth={2} dot={false} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="small muted">
+            {num(d.universe.stats.owned_pr_rows)} individual openings parsed from {num(d.universe.stats.owned_releases)} releases ({num(d.universe.stats.owned_pr_spaces)} spaces;
+            {" "}{num(d.universe.stats.owned_converted)} were leased lots converted to owned). The latest stated total, {num(d.universe.stats.owned_total_stated)} lots /
+            {" "}{num(d.universe.stats.owned_total_spaces_stated)} spaces, matches the 決算短信. Releases start in 2008, when 81 lots were already owned, and none were published for 2016–17.
+          </div>
+        </Card>)}
       <Card title="Annual results" note="¥ million · source documents linked">
         <SortTable rows={annual} rowKey={(r) => String(r.fy)} initial={{ key: "fy", dir: -1 }} cols={[
           { key: "fy", label: "Fiscal year (to Sep)", sort: (r) => r.fy, render: (r) => `FY${r.fy}` },
