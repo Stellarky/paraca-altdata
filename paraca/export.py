@@ -50,8 +50,8 @@ def _open_share(statuses):
 
 
 def export_all(db: Path, out: Path, fin_csv: Path) -> None:
-    con = sqlite3.connect(db)
-    con.row_factory = sqlite3.Row
+    from .db import connect
+    con = connect(db)                     # ensures every table exists
     now = datetime.now(timezone.utc).replace(microsecond=0)
     lots = [dict(r) for r in con.execute("SELECT * FROM lots ORDER BY prefecture_id, lot_name")]
     listings = {r["listing_id"]: dict(r) for r in con.execute("SELECT * FROM listings")}
@@ -181,6 +181,15 @@ def export_all(db: Path, out: Path, fin_csv: Path) -> None:
                              "car_open": r["car_monthly_open_share"], "rent": r["median_car_monthly_rent_yen"]} for r in nat],
     })
     _j(web / "events.json", events[:500])
+    universe, ustats = build_universe(con, lots)
+    _j(web / "universe.json", {"lots": universe, "stats": ustats, "owned_timeline": owned_timeline(con),
+        "osm_attribution": "© OpenStreetMap contributors (ODbL)"})
+    _w(out / "exports/known_lots.csv", [{"operator": config.OPERATOR, "universe_id": c["id"], "lot_name": c["name"], "address": c["addr"],
+        "latitude": c["lat"], "longitude": c["lng"], "area_id": c["area"], "capacity": c["spaces"], "opened": c["opened"],
+        "owned": int(c["owned"]), "sources": "|".join(sorted(c["sources"])), "portal_lot_id": c["sources"].get("portal"),
+        "osm_id": c["sources"].get("osm"), "owned_release_url": c["sources"].get("owned_pr")} for c in universe],
+        ["operator", "universe_id", "lot_name", "address", "latitude", "longitude", "area_id", "capacity", "opened", "owned",
+         "sources", "portal_lot_id", "osm_id", "owned_release_url"])
 
     # quality diagnostics
     stale_cut = (now - timedelta(hours=26)).isoformat()
@@ -220,6 +229,74 @@ def export_all(db: Path, out: Path, fin_csv: Path) -> None:
             "note": "The monthly-portal signal starts on 2026-10-20. At least ~8 quarters of overlap with reported results are "
                     "needed before testing whether it leads revenue; no predictive claim is made."}})
     con.close()
+
+
+def build_universe(con, lots: list[dict]) -> tuple[list[dict], dict]:
+    """Merge every source into one deduplicated list of known Paraca lots.
+
+    Two records within 60 m are treated as the same lot. Sources:
+      portal   - monthly-contract listings (sweet.paraca.co.jp)
+      owned_pr - owned-lot opening releases (geocoded addresses)
+      osm      - OpenStreetMap features tagged Paraca
+    """
+    from .normalize import haversine_km, assign_area
+    recs = []
+    for l in lots:
+        if l["active"] and l["latitude"]:
+            recs.append({"src": "portal", "name": l["lot_name"], "lat": l["latitude"], "lng": l["longitude"], "ref": l["lot_id"],
+                         "addr": l["address"], "spaces": None, "date": None})
+    for r in con.execute("SELECT * FROM owned_lots WHERE kind='opened'"):
+        if r["latitude"]:
+            recs.append({"src": "owned_pr", "name": r["lot_name"], "lat": r["latitude"], "lng": r["longitude"], "ref": r["pdf_url"],
+                         "addr": r["address"], "spaces": r["spaces"], "date": r["open_date"] or r["release_date"], "geo": r["geo_quality"]})
+    for r in con.execute("SELECT * FROM osm_lots"):
+        if r["latitude"]:
+            recs.append({"src": "osm", "name": r["name"], "lat": r["latitude"], "lng": r["longitude"], "ref": r["osm_id"],
+                         "addr": None, "spaces": r["capacity"], "date": None})
+    clusters: list[dict] = []
+    grid: dict = {}
+    for rec in recs:
+        key = (round(rec["lat"], 2), round(rec["lng"], 2))
+        cand = [c for dk in [(key[0] + a / 100, key[1] + b / 100) for a in (-1, 0, 1) for b in (-1, 0, 1)]
+                for c in grid.get((round(dk[0], 2), round(dk[1], 2)), [])]
+        hit = next((c for c in cand if rec["src"] not in c["sources"]
+                    and haversine_km(c["lat"], c["lng"], rec["lat"], rec["lng"]) <= 0.06), None)
+        if hit:
+            hit["sources"][rec["src"]] = rec["ref"]
+            hit["name"] = hit["name"] or rec["name"]
+            hit["spaces"] = hit["spaces"] or rec["spaces"]
+            hit["opened"] = hit["opened"] or rec["date"]
+            hit["addr"] = hit["addr"] or rec["addr"]
+            continue
+        c = {"lat": rec["lat"], "lng": rec["lng"], "name": rec["name"], "addr": rec["addr"], "spaces": rec["spaces"],
+             "opened": rec["date"], "sources": {rec["src"]: rec["ref"]}, "geo": rec.get("geo")}
+        clusters.append(c)
+        grid.setdefault(key, []).append(c)
+    for i, c in enumerate(clusters):
+        c["id"] = f"u{i:05d}"
+        c["area"], c["dist"] = assign_area(c["lat"], c["lng"])
+        c["owned"] = "owned_pr" in c["sources"]
+    by_src = Counter(s for c in clusters for s in c["sources"])
+    owned_rows = con.execute("SELECT COUNT(*), SUM(spaces), SUM(latitude IS NOT NULL) FROM owned_lots WHERE kind='opened'").fetchone()
+    stats = {"union_lots": len(clusters), "by_source": dict(by_src),
+             "multi_source": sum(len(c["sources"]) > 1 for c in clusters),
+             "owned_pr_rows": owned_rows[0], "owned_pr_spaces": owned_rows[1], "owned_pr_geocoded": owned_rows[2],
+             "owned_releases": con.execute("SELECT COUNT(*) FROM owned_releases").fetchone()[0],
+             "owned_release_errors": con.execute("SELECT COUNT(*) FROM owned_releases WHERE error IS NOT NULL").fetchone()[0],
+             "osm_rows": con.execute("SELECT COUNT(*) FROM osm_lots").fetchone()[0]}
+    return clusters, stats
+
+
+def owned_timeline(con) -> list[dict]:
+    """Owned lots opened per month according to the releases (cumulative)."""
+    rows = con.execute("""SELECT substr(COALESCE(open_date, release_date),1,7) m, COUNT(*), SUM(COALESCE(spaces,0))
+                          FROM owned_lots WHERE kind='opened' AND COALESCE(open_date, release_date) IS NOT NULL GROUP BY m ORDER BY m""").fetchall()
+    out, cl, cs = [], 0, 0
+    for m, n, sp in rows:
+        cl += n
+        cs += sp
+        out.append({"m": m, "n": n, "spaces": sp, "cum_lots": cl, "cum_spaces": cs})
+    return out
 
 
 def _hist(xs, step):

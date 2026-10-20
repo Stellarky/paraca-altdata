@@ -1,34 +1,39 @@
 name: collect
 
-# Hourly batch collection (one job for the whole portal, ~50 requests at 3 s spacing).
-# Change the cron to adjust cadence. GitHub may delay scheduled runs at busy times.
+# Hourly collection that does not rely on GitHub's cron alone.
+# Each job loops for ~3 h (one batch per hour at :17 UTC), publishes after every
+# batch, then dispatches its own successor (workflow_dispatch is allowed for
+# GITHUB_TOKEN). The cron below is only a safety net that restarts the chain.
+# `concurrency` keeps at most one running job + one pending, so chains never multiply.
 on:
   schedule:
-    - cron: "17 * * * *"
+    - cron: "17 */3 * * *"
   workflow_dispatch:
     inputs:
-      prefectures:
-        description: "Comma-separated prefecture ids for a partial test run (blank = all)"
-        required: false
-        default: ""
+      one_shot:
+        description: "Run a single batch and stop the chain"
+        type: boolean
+        default: false
   push:
     branches: [main]
-    paths: ["paraca/**", "data/financials.csv", ".github/workflows/collect.yml"]
+    paths: ["paraca/**", "scripts/**", "data/financials.csv", ".github/workflows/collect.yml", "requirements.txt"]
 
 concurrency:
-  group: collect          # never two writers on the data branch
+  group: collect
   cancel-in-progress: false
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   collect:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 200
     env:
       PARACA_MIN_INTERVAL: "3"
       PARACA_MAX_REQUESTS: "200"
+      LOOP_SECONDS: "10500"
     steps:
       - uses: actions/checkout@v4
 
@@ -44,40 +49,21 @@ jobs:
           git fetch --depth=1 origin data
           git worktree add --detach store origin/data
 
-      - name: Collect
-        id: collect
-        continue-on-error: true   # a partial run is still recorded and exported
-        run: |
-          if [ -n "${{ github.event.inputs.prefectures }}" ]; then
-            python -m paraca.cli collect --db store/paraca.sqlite --prefectures "${{ github.event.inputs.prefectures }}"
-          else
-            python -m paraca.cli collect --db store/paraca.sqlite
-          fi
-
-      - name: Export CSV + dashboard JSON
-        run: python -m paraca.cli export --db store/paraca.sqlite --out store
+      - name: Collect hourly until the time budget is used
+        env:
+          ONE_SHOT: ${{ (github.event_name == 'push' || inputs.one_shot) && '1' || '0' }}
+        run: scripts/hourly_loop.sh
 
       - name: Back up database as artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: paraca-sqlite-${{ github.run_id }}
           path: store/paraca.sqlite
-          retention-days: 30
+          retention-days: 14
 
-      - name: Publish (rolling single commit on data branch)
-        run: |
-          cd store
-          git config user.name "paraca-collector[bot]"
-          git config user.email "actions@users.noreply.github.com"
-          git checkout --orphan snapshot   # keeps the working tree (switch --orphan would empty it)
-          git add -A
-          git commit -qm "data: run ${{ github.run_id }} ($(date -u +%FT%TZ))"
-          ok=0
-          for i in 1 2 3; do git push --force origin HEAD:data && ok=1 && break; sleep 10; done
-          [ "$ok" = 1 ] || { echo "::error::could not push to data branch"; exit 1; }
-
-      - name: Fail job if collection failed
-        if: steps.collect.outcome == 'failure'
-        run: |
-          echo "::warning::collection was partial or failed; see run log and quality.json"
-          exit 1
+      - name: Start the next job in the chain
+        if: always() && !cancelled() && !inputs.one_shot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run collect.yml --ref main -R "${{ github.repository }}"

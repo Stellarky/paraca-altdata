@@ -40,6 +40,15 @@ CREATE INDEX IF NOT EXISTS ix_snap_listing ON listing_snapshots(listing_id, coll
 CREATE TABLE IF NOT EXISTS events(
   event_utc TEXT, run_id TEXT, kind TEXT, lot_id TEXT, listing_id TEXT,
   old_value TEXT, new_value TEXT);
+CREATE TABLE IF NOT EXISTS owned_releases(
+  pdf_url TEXT PRIMARY KEY, release_date TEXT, title TEXT, fetched_utc TEXT, n_lots INTEGER, text TEXT, error TEXT);
+CREATE TABLE IF NOT EXISTS owned_lots(
+  pdf_url TEXT, seq INTEGER, release_date TEXT, kind TEXT, lot_name TEXT, address TEXT, spaces INTEGER,
+  open_date TEXT, latitude REAL, longitude REAL, geo_title TEXT, geo_quality TEXT, flags TEXT, raw TEXT,
+  PRIMARY KEY(pdf_url, seq));
+CREATE TABLE IF NOT EXISTS osm_lots(
+  osm_id TEXT PRIMARY KEY, name TEXT, operator TEXT, latitude REAL, longitude REAL, capacity INTEGER,
+  tags TEXT, first_seen_utc TEXT, last_seen_utc TEXT);
 -- Hourly coin-parking observations. Empty until a licensed/permitted source exists.
 CREATE TABLE IF NOT EXISTS hourly_observations(
   lot_id TEXT, status_timestamp_utc TEXT, collection_utc TEXT, collection_jst TEXT,

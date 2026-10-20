@@ -39,6 +39,29 @@ class PoliteClient:
             if gap > 0:
                 self._sleep(gap)
 
+    def get_bytes(self, url: str) -> bytes:
+        """Binary GET (PDFs) with the same politeness rules; no text cache."""
+        last = None
+        for attempt in range(1, self.max_retries + 1):
+            if self.requests_made >= self.max_requests:
+                raise RequestBudgetExceeded(f"request cap {self.max_requests} reached")
+            self._wait()
+            self.requests_made += 1
+            try:
+                r = self.s.get(url, timeout=self.timeout)
+                self._last = self._clock()
+                if r.status_code in (401, 403):
+                    raise PermissionError(f"HTTP {r.status_code} for {url}")
+                r.raise_for_status()
+                self.bytes += len(r.content)
+                return r.content
+            except requests.RequestException as e:
+                self._last = self._clock()
+                self.errors += 1
+                last = e
+                self._sleep(min(5 * 2 ** (attempt - 1), 60))
+        raise RuntimeError(f"giving up on {url}: {last}")
+
     def get(self, url: str, params: dict | None = None) -> str:
         full = url + ("?" + urlencode(params) if params else "")
         if self.cache_dir:

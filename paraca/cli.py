@@ -78,6 +78,91 @@ def cmd_import_pilot(args) -> int:
     return 0
 
 
+def _last_ok(con, source: str):
+    r = con.execute("SELECT started_utc FROM runs WHERE source=? AND status='ok' ORDER BY started_utc DESC LIMIT 1", (source,)).fetchone()
+    return datetime.fromisoformat(r[0]) if r else None
+
+
+def _record(con, source, started, status, client, pages, n, note):
+    run_id = started.strftime("%Y%m%dT%H%M%SZ") + "-" + source
+    con.execute("INSERT OR REPLACE INTO runs VALUES(?,?,?,?,?,?,?,?,?,?,?)", (run_id, source, iso(started), iso(now_utc()), status,
+                client.requests_made, client.errors, pages, n, (now_utc() - started).total_seconds(), json.dumps(note, ensure_ascii=False)))
+    con.commit()
+
+
+def cmd_owned(args) -> int:
+    """Owned-lot opening releases: full backfill once, then page 1 every `--every-hours`."""
+    from .sources import owned
+    con = connect(Path(args.db))
+    last = _last_ok(con, "owned_pr")
+    started = now_utc()
+    if last and not args.force and (started - last).total_seconds() < args.every_hours * 3600:
+        log.info("owned_pr fresh (last %s); skipping", last)
+        return 0
+    client = PoliteClient(max_requests=args.max_requests)
+    status, note, new_pdfs, new_lots = "ok", {}, 0, 0
+    try:
+        known = {r[0] for r in con.execute("SELECT pdf_url FROM owned_releases WHERE error IS NULL")}
+        rels = owned.crawl_releases(client, max_pages=None if (not known or args.full) else 1)
+        for rel in rels:
+            if rel.url in known:
+                continue
+            try:
+                text = owned.pdf_text(client.get_bytes(rel.url))
+                lots = owned.parse_release_text(text, rel.release_date)
+                err = None
+            except (RuntimeError, ValueError, Exception) as e:  # noqa: BLE001  keep going; record error
+                if isinstance(e, (RequestBudgetExceeded, PermissionError)):
+                    raise
+                text, lots, err = "", [], str(e)[:300]
+            con.execute("INSERT OR REPLACE INTO owned_releases VALUES(?,?,?,?,?,?,?)",
+                        (rel.url, rel.release_date, rel.title, iso(now_utc()), len(lots), text, err))
+            con.execute("DELETE FROM owned_lots WHERE pdf_url=?", (rel.url,))
+            for i, l in enumerate(lots):
+                lat = lng = title = None
+                q = "not_geocoded"
+                if not args.no_geocode:
+                    lat, lng, title, q = owned.geocode(client, l.address)
+                con.execute("INSERT INTO owned_lots VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                            (rel.url, i, rel.release_date, l.kind, l.lot_name, l.address, l.spaces, l.open_date,
+                             lat, lng, title, q, ",".join(l.flags), l.raw))
+            con.commit()
+            new_pdfs += 1
+            new_lots += len(lots)
+            log.info("release %s %s: %d lots%s", rel.release_date, rel.url.rsplit('/', 1)[-1], len(lots), f" ERROR {err}" if err else "")
+        note = {"releases_seen": len(rels), "new_pdfs": new_pdfs, "new_lots": new_lots}
+    except (RequestBudgetExceeded, PermissionError, RuntimeError) as e:
+        status, note = "partial", {"error": str(e), "new_pdfs": new_pdfs, "new_lots": new_lots}
+        log.error("owned_pr incomplete: %s", e)
+    _record(con, "owned_pr", started, status, client, 0, new_lots, note)
+    return 0
+
+
+def cmd_osm(args) -> int:
+    from .sources import osm
+    con = connect(Path(args.db))
+    last = _last_ok(con, "osm")
+    started = now_utc()
+    if last and not args.force and (started - last).total_seconds() < args.every_hours * 3600:
+        log.info("osm fresh (last %s); skipping", last)
+        return 0
+    client = PoliteClient(max_requests=3)
+    try:
+        rows = osm.fetch(client)
+        ts = iso(started)
+        for r in rows:
+            con.execute("""INSERT INTO osm_lots VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(osm_id) DO UPDATE SET
+                name=excluded.name, operator=excluded.operator, latitude=excluded.latitude, longitude=excluded.longitude,
+                capacity=excluded.capacity, tags=excluded.tags, last_seen_utc=excluded.last_seen_utc""",
+                (r["osm_id"], r["name"], r["operator"], r["lat"], r["lng"], r["capacity"], r["tags"], ts, ts))
+        _record(con, "osm", started, "ok", client, 1, len(rows), {"elements": len(rows)})
+        log.info("osm: %d elements", len(rows))
+    except Exception as e:  # noqa: BLE001
+        _record(con, "osm", started, "failed", client, 1, 0, {"error": str(e)[:300]})
+        log.error("osm failed: %s", e)
+    return 0
+
+
 def cmd_export(args) -> int:
     from .export import export_all
     export_all(Path(args.db), Path(args.out), Path(args.financials))
@@ -91,6 +176,11 @@ def main(argv=None) -> int:
     c = sub.add_parser("collect"); c.add_argument("--db", required=True); c.add_argument("--prefectures"); c.add_argument("--cache")
     c.set_defaults(fn=cmd_collect)
     i = sub.add_parser("import-pilot"); i.add_argument("file"); i.add_argument("--db", required=True); i.set_defaults(fn=cmd_import_pilot)
+    o = sub.add_parser("owned"); o.add_argument("--db", required=True); o.add_argument("--every-hours", type=float, default=24)
+    o.add_argument("--full", action="store_true"); o.add_argument("--force", action="store_true"); o.add_argument("--no-geocode", action="store_true")
+    o.add_argument("--max-requests", type=int, default=900); o.set_defaults(fn=cmd_owned)
+    m = sub.add_parser("osm"); m.add_argument("--db", required=True); m.add_argument("--every-hours", type=float, default=168)
+    m.add_argument("--force", action="store_true"); m.set_defaults(fn=cmd_osm)
     e = sub.add_parser("export"); e.add_argument("--db", required=True); e.add_argument("--out", required=True)
     e.add_argument("--financials", default="data/financials.csv"); e.set_defaults(fn=cmd_export)
     a = p.parse_args(argv)
