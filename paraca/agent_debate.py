@@ -53,12 +53,9 @@ def _load(p: Path, default=None):
 def fetch_price(state: dict) -> tuple[float, str, str]:
     """Latest Paraca close from Stooq (independent daily data). Falls back to the last known price."""
     try:
-        import requests
-        r = requests.get("https://stooq.com/q/d/l/", params={"s": "4809.jp", "i": "d"}, timeout=20)
-        r.raise_for_status()
-        rows = [l.split(",") for l in r.text.strip().splitlines()[1:]]
-        d, close = rows[-1][0], float(rows[-1][4])
-        return close, d, "stooq 4809.jp daily close"
+        from .altsignals import daily_closes
+        rows = daily_closes("4809.jp")
+        return float(rows[-1]["c"]), rows[-1]["d"], "daily close (Yahoo Finance 4809.T, Stooq fallback)"
     except Exception as e:                      # network blocked or no data
         last = state.get("last_price")
         if last:
@@ -233,7 +230,8 @@ def run(store: Path, force: bool = False) -> dict | None:
     state = _load(state_p, None) or {"published_target": ANCHOR_TARGET, "published_rating": ANCHOR_RATING,
                                      "since": ANCHOR_DATE, "history": []}
     today = datetime.now(JST).date().isoformat()
-    if state.get("last_run_date") == today and not force:
+    stale_price = "fail" in str((state.get("last_price") or {}).get("source", "fail"))
+    if state.get("last_run_date") == today and not force and not stale_price:
         print(f"debate already ran today ({today})")
         return None
     o = observe(web, state)
@@ -243,11 +241,11 @@ def run(store: Path, force: bool = False) -> dict | None:
            "observation": o, "debate": d, "decision": {k: v for k, v in dec.items() if not k.startswith("_")},
            "thresholds": THRESHOLDS, "previous": {"target": state["published_target"], "rating": state["published_rating"]}}
     (web / "debate.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
-    hist = (state.get("history") or [])[-89:] + [{"d": today, "target": dec["published_target"], "rating": dec["published_rating"],
+    hist = [h for h in (state.get("history") or []) if h.get("d") != today][-89:] + [{"d": today, "target": dec["published_target"], "rating": dec["published_rating"],
                                                   "combined": d["combined_target"], "price": o["price"]}]
     state.update({"published_target": dec["published_target"], "published_rating": dec["published_rating"],
                   "pending_rating": dec["_pending"], "pending_streak": dec["_streak"], "last_run_date": today,
-                  "last_release_seen": o["latest_release"], "last_price": {"close": o["price"], "date": o["price_date"]},
+                  "last_release_seen": o["latest_release"], "last_price": {"close": o["price"], "date": o["price_date"], "source": o["price_source"]},
                   "history": hist})
     state_p.write_text(json.dumps(state, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"debate {today}: combined ¥{d['combined_target']:,} spread {d['spread_pct']}% -> "

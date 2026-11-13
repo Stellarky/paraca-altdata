@@ -33,9 +33,10 @@ from . import config
 
 JST = timezone(timedelta(hours=9))
 UA = {"User-Agent": "paraca-altdata research collector (github.com/Stellarky/paraca-altdata)"}
-TICKERS = {"4809.jp": "Paraca", "4666.jp": "Park24", "2353.jp": "Nippon Parking Dev.", "3496.jp": "Azoom", "^tpx": "TOPIX"}
+TICKERS = {"4809.jp": "Paraca", "4666.jp": "Park24", "2353.jp": "Nippon Parking Dev.", "3496.jp": "Azoom", "^tpx": "TOPIX (ETF 1306)"}
 WIKI = ["パラカ", "パーク24", "日本駐車場開発", "アズーム"]
-GIBS_LAYER = "VIIRS_SNPP_DayNightBand_At_Sensor_Radiance"
+GIBS_LAYERS = ["VIIRS_SNPP_DayNightBand_ENCC", "VIIRS_NOAA20_DayNightBand_ENCC", "VIIRS_SNPP_DayNightBand_At_Sensor_Radiance"]
+GIBS_LAYER = GIBS_LAYERS[0]
 SAT_BACKFILL_DAYS = 21
 SAT_HALF_DEG = 0.03          # ~3 km box around each market centre
 
@@ -46,17 +47,34 @@ def _get(url, **kw):
     return r
 
 
+YAHOO = {"4809.jp": "4809.T", "4666.jp": "4666.T", "2353.jp": "2353.T", "3496.jp": "3496.T", "^tpx": "1306.T"}
+
+
+def daily_closes(sym: str) -> list[dict]:
+    """Daily closes, Yahoo Finance chart API first (TOPIX via the 1306 ETF), Stooq as fallback."""
+    try:
+        j = _get(f"https://query1.finance.yahoo.com/v8/finance/chart/{YAHOO.get(sym, sym)}",
+                 params={"range": "1y", "interval": "1d"}).json()["chart"]["result"][0]
+        ts, cl = j["timestamp"], j["indicators"]["quote"][0]["close"]
+        rows = [{"d": datetime.fromtimestamp(t, JST).date().isoformat(), "c": round(c, 2)} for t, c in zip(ts, cl) if c]
+        if rows:
+            return rows
+    except Exception:
+        pass
+    rows = []
+    for line in _get("https://stooq.com/q/d/l/", params={"s": sym, "i": "d"}).text.strip().splitlines()[1:]:
+        p = line.split(",")
+        try:
+            rows.append({"d": p[0], "c": float(p[4])})
+        except (IndexError, ValueError):
+            continue
+    return rows
+
+
 def market() -> dict:
     series, perf = {}, {}
     for sym, name in TICKERS.items():
-        rows = []
-        for line in _get("https://stooq.com/q/d/l/", params={"s": sym, "i": "d"}).text.strip().splitlines()[1:]:
-            p = line.split(",")
-            try:
-                rows.append({"d": p[0], "c": float(p[4])})
-            except (IndexError, ValueError):
-                continue
-        rows = rows[-260:]
+        rows = daily_closes(sym)[-260:]
         if not rows:
             raise ValueError(f"no rows for {sym}")
         series[sym] = rows
@@ -111,14 +129,20 @@ def weather() -> dict:
 
 
 def _brightness(png: bytes) -> float | None:
+    """Mean brightness of the non-transparent pixels; None for a blank (no-data) image."""
     from PIL import Image
-    im = Image.open(io.BytesIO(png)).convert("L")
-    px = list(im.getdata())
-    return round(sum(px) / len(px), 2) if px else None
+    im = Image.open(io.BytesIO(png)).convert("RGBA")
+    px = [(r + g + b) / 3 for r, g, b, a in im.getdata() if a > 0]
+    if not px or max(px) == 0:
+        return None
+    return round(sum(px) / len(px), 2)
 
 
 def satellite(prev: dict | None) -> dict:
-    hist: dict[str, dict[str, float]] = {k: dict(v) for k, v in ((prev or {}).get("history") or {}).items()}
+    hist: dict[str, dict[str, float]] = {k: {d: v for d, v in h.items() if v}       # drop blank days from v1
+                                         for k, h in ((prev or {}).get("history") or {}).items()}
+    layer = (prev or {}).get("layer_used")
+    layers = [layer] if layer in GIBS_LAYERS else GIBS_LAYERS
     today = datetime.now(JST).date()
     errors = 0
     for a in config.AREAS:
@@ -129,14 +153,16 @@ def satellite(prev: dict | None) -> dict:
                 continue
             bbox = f"{a.lat - SAT_HALF_DEG},{a.lng - SAT_HALF_DEG},{a.lat + SAT_HALF_DEG},{a.lng + SAT_HALF_DEG}"
             try:
-                r = _get("https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi", params={
-                    "SERVICE": "WMS", "VERSION": "1.3.0", "REQUEST": "GetMap", "LAYERS": GIBS_LAYER, "STYLES": "",
-                    "CRS": "EPSG:4326", "BBOX": bbox, "WIDTH": 48, "HEIGHT": 48, "FORMAT": "image/png", "TIME": day}, timeout=40)
-                if "image" not in r.headers.get("Content-Type", ""):
-                    continue
-                v = _brightness(r.content)
-                if v is not None:
-                    h[day] = v
+                for ly in layers:
+                    r = _get("https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi", params={
+                        "SERVICE": "WMS", "VERSION": "1.3.0", "REQUEST": "GetMap", "LAYERS": ly, "STYLES": "",
+                        "CRS": "EPSG:4326", "BBOX": bbox, "WIDTH": 48, "HEIGHT": 48, "FORMAT": "image/png", "TIME": day}, timeout=40)
+                    v = _brightness(r.content) if "image" in r.headers.get("Content-Type", "") else None
+                    if v is not None:
+                        h[day] = v
+                        if len(layers) > 1:
+                            layers = [ly]
+                        break
             except Exception:
                 errors += 1
                 if errors > 25:
@@ -155,7 +181,8 @@ def satellite(prev: dict | None) -> dict:
                       "median_7d": m7, "median_30d": m30,
                       "change_pct": round((m7 / m30 - 1) * 100, 1) if m7 and m30 else None,
                       "series": [{"d": d, "v": h[d]} for d in sorted(h)][-60:]})
-    return {"layer": GIBS_LAYER, "areas": areas, "history": hist, "fetch_errors": errors,
+    used = layers[0] if len(layers) == 1 else None
+    return {"layer": used or "none returned data yet", "layer_used": used, "areas": areas, "history": hist, "fetch_errors": errors,
             "note": ("Mean pixel brightness (0-255) of NASA GIBS VIIRS day/night band images over a ~6 km box. "
                      "Single nights are affected by cloud and moonlight, so compare medians, not days.")}
 
@@ -186,7 +213,8 @@ def run(store: Path, force: bool = False) -> None:
         pass
     if prev and not force:
         age = datetime.now(timezone.utc) - datetime.fromisoformat(prev["generated_utc"])
-        if age < timedelta(hours=20):
+        sat_empty = not any(a.get("days") for a in ((prev.get("satellite") or {}).get("areas") or []))
+        if age < timedelta(hours=20) and not prev.get("errors") and not sat_empty:
             print(f"signals fresh ({age}), skipping")
             return
     out = {"generated_utc": datetime.now(timezone.utc).replace(microsecond=0).isoformat(), "errors": {}}
