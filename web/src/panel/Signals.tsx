@@ -89,7 +89,7 @@ function MarketCard({ s }: { s: any }) {
   }));
   const rows = Object.values(byDate).sort((a: any, b: any) => a.d.localeCompare(b.d));
   return (
-    <Card title="Share price vs peers" note="Rebased to 100 about six months ago (Stooq daily closes).">
+    <Card title="Share price vs peers" note="Rebased to 100 about six months ago (daily closes, Yahoo Finance; TOPIX via ETF 1306).">
       <div style={{ height: 260 }}><ResponsiveContainer>
         <LineChart data={rows} margin={{ left: 0, right: 12 }}>
           <CartesianGrid vertical={false} /><XAxis dataKey="d" tickFormatter={(v) => v.slice(5)} minTickGap={40} tickLine={false} axisLine={false} />
@@ -135,7 +135,7 @@ function SatelliteCard({ s }: { s: any }) {
         { key: "c", label: "Change", right: true, sort: (r: any) => r.change_pct, render: (r: any) => r.change_pct == null ? <span className="muted">building</span> : <span className={r.change_pct > 0 ? "up" : "down"}>{r.change_pct > 0 ? "+" : ""}{r.change_pct}%</span> },
         { key: "d", label: "Nights", right: true, sort: (r: any) => r.days, render: (r: any) => r.days },
       ]} />
-      <p className="foot-note">Source: NASA GIBS, layer {sat.layer}.</p>
+      <p className="foot-note">Source: NASA GIBS, VIIRS day/night band{sat.layer_used ? ` (${sat.layer_used})` : ""}. City centres can saturate near 255; changes matter more than levels.</p>
     </Card>);
 }
 
