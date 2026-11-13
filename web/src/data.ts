@@ -60,7 +60,7 @@ export interface Panel { generated_utc: string; snapshots_7d: number; runs_total
   coverage: { pref: string; portal: number; owned: number; known: number }[];
   events: (Event & { lot_name: string | null; area: string | null })[]; universe_stats: Record<string, any>; status?: StatusData; }
 
-export interface Bundle { summary: Summary; lots: Lot[]; events: Event[]; financials: Financials; forecast: Forecast; quality: Quality; universe: Universe | null; panel: Panel | null; source: string; }
+export interface Bundle { summary: Summary; lots: Lot[]; events: Event[]; financials: Financials; forecast: Forecast; quality: Quality; universe: Universe | null; panel: Panel | null; signals?: any; debate?: any; agentState?: any; source: string; }
 
 export const REPO = "https://github.com/Stellarky/paraca-altdata";
 const DEFAULT_BASE = "https://raw.githubusercontent.com/Stellarky/paraca-altdata/data/web/";
@@ -78,6 +78,7 @@ export async function loadAll(): Promise<Bundle> {
   };
   const [summary, lots, events, financials, forecast, quality] = await Promise.all(
     ["summary.json", "lots.json", "events.json", "financials.json", "forecast.json", "quality.json"].map(get));
-  const [universe, panel] = await Promise.all([get("universe.json").catch(() => null), get("panel.json").catch(() => null)]);
-  return { summary, lots, events, financials, forecast, quality, universe, panel, source: base };
+  const [universe, panel, signals, debate, agentState] = await Promise.all(
+    ["universe.json", "panel.json", "signals.json", "debate.json", "agent_state.json"].map((f) => get(f).catch(() => null)));
+  return { summary, lots, events, financials, forecast, quality, universe, panel, signals, debate, agentState, source: base };
 }
