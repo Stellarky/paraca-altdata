@@ -105,17 +105,40 @@ def main(store: Path) -> int:
     today = datetime.now(JST).date().isoformat()
     post_update = summary is not None and (not marker.exists() or marker.read_text().strip() != today)
     update = build_update(summary) if post_update else None
+    posts = []
+    if update:
+        posts.append(("daily_update", update))
+        deb = None
+        try:
+            deb = json.loads((store / "web" / "debate.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            pass
+        if deb and deb.get("date") == today:
+            fmt = lambda a: {"agent": a["title"], "target_price_yen": a["target"], "confidence": a["confidence"],
+                             **({"rebuttal": a["rebuttal"], "moved_yen": a["moved"]} if "rebuttal" in a else {"case": a["argument"]})}
+            posts += [("debate_round1", [fmt(a) for a in deb["debate"]["round1"]]),
+                      ("debate_round2", [fmt(a) for a in deb["debate"]["round2"]]),
+                      ("decision", {"date": deb["date"], "share_price_yen": deb["observation"]["price"],
+                                    "combined_target_yen": deb["debate"]["combined_target"],
+                                    "agent_spread_pct": deb["debate"]["spread_pct"],
+                                    "published_target_yen": deb["decision"]["published_target"],
+                                    "rating": deb["decision"]["published_rating"],
+                                    "expected_return": deb["decision"]["expected_return"],
+                                    "required_return": deb["decision"]["required_return"],
+                                    "rules_applied": deb["decision"]["rules_applied"],
+                                    "previous": deb["previous"]})]
 
     sent_all = True
     for n, key in enumerate(keys, 1):
         r = _call("POST", "/api/state", key, {"check_in_every": CHECK_IN_EVERY})
         ok = r is not None and r.ok
         print(f"agent {n}: check-in {'ok' if ok else 'failed ' + str(getattr(r, 'status_code', 'no response'))}")
-        if ok and update:
-            r2 = _call("POST", "/api/outputs", key, {"category": "daily_update", "content": update})
-            sent = r2 is not None and r2.ok
-            sent_all &= sent
-            print(f"agent {n}: daily update {'posted' if sent else 'failed'}")
+        if ok and posts:
+            for cat, content in posts:
+                r2 = _call("POST", "/api/outputs", key, {"category": cat, "content": content})
+                sent = r2 is not None and r2.ok
+                sent_all &= sent
+                print(f"agent {n}: {cat} {'posted' if sent else 'failed'}")
         elif update:
             sent_all = False
     if update and sent_all:
