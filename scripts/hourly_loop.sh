@@ -24,6 +24,7 @@ while :; do
   python -m paraca.cli osm     --db store/paraca.sqlite --every-hours 168 || echo "::warning::osm failed"
   python -m paraca.cli status  --db store/paraca.sqlite || echo "::warning::status sources failed"
   python -m paraca.cli export  --db store/paraca.sqlite --out store
+  python scripts/dashboard_checkin.py store || true   # report to the class dashboard (never blocks)
   publish "$i"
   echo "::endgroup::"
   now=$(date +%s)
