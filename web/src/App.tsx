@@ -5,8 +5,9 @@ import { AreasNow, Hero, Strongholds } from "./panel/Top";
 import { Traffic } from "./panel/Traffic";
 import { ByType, Official, Owned } from "./panel/Middle";
 import { AreaDetail } from "./panel/Bottom";
+import { Debate, Signals } from "./panel/Signals";
 
-const NAV = [["areas", "Areas"], ["traffic", "空/混/満"], ["bytype", "By type"], ["official", "Official figures"], ["owned", "Owned lots"], ["detail", "Area detail"], ["lots", "Lots"]];
+const NAV = [["debate", "Debate"], ["signals", "Signals"], ["areas", "Areas"], ["traffic", "空/混/満"], ["bytype", "By type"], ["official", "Official figures"], ["owned", "Owned lots"], ["detail", "Area detail"], ["lots", "Lots"]];
 
 function ThemeToggle() {
   const [t, setT] = useState<string>(() => { try { return localStorage.getItem("theme") || "auto"; } catch { return "auto"; } });
@@ -59,6 +60,8 @@ export default function App() {
         {props && !data!.panel && <div className="err">This data build has no panel.json yet; it appears after the next hourly run.</div>}
         {props && data!.panel && <>
           <Hero {...props} />
+          <Debate {...props} />
+          <Signals {...props} />
           <AreasNow {...props} />
           <Strongholds {...props} />
           <Traffic {...props} />

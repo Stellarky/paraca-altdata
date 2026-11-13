@@ -82,6 +82,14 @@ def observe(web: Path, state: dict) -> dict:
     q = (fin.get("quarters") or [{}])[-1]
     nxt = f.get("next") or {}
     price, price_date, price_src = fetch_price(state)
+    sig = _load(web / "signals.json", {}) or {}
+    perf = ((sig.get("market") or {}).get("perf") or {})
+    rel_1m = (perf["4809.jp"]["r20"] - perf["4666.jp"]["r20"]) if perf.get("4809.jp", {}).get("r20") is not None and perf.get("4666.jp", {}).get("r20") is not None else None
+    north = [a for a in ((sig.get("weather") or {}).get("areas") or []) if a["id"] in ("sapporo", "sapporo_east", "aomori", "akita", "niigata_central", "sendai")]
+    snow_qtd = round(sum(a["qtd"]["snow_cm"] for a in north), 1) if north else None
+    snow_ly = round(sum(a["qtd_last_year"]["snow_cm"] for a in north), 1) if north else None
+    lights = [a["change_pct"] for a in ((sig.get("satellite") or {}).get("areas") or []) if a.get("change_pct") is not None]
+    light_chg = round(st.median(lights), 1) if lights else None
     return {
         "date": datetime.now(JST).date().isoformat(),
         "price": price, "price_date": price_date, "price_source": price_src,
@@ -98,6 +106,8 @@ def observe(web: Path, state: dict) -> dict:
         "q4_guidance_implied": nxt.get("guidance_implied_q4"),
         "fy_model": nxt.get("full_year_model"), "fy_guidance": nxt.get("full_year_guidance"),
         "latest_release": q.get("release_date"),
+        "paraca_vs_park24_1m": round(rel_1m, 4) if rel_1m is not None else None,
+        "north_snow_qtd_cm": snow_qtd, "north_snow_ly_cm": snow_ly, "night_light_change_pct": light_chg,
     }
 
 
@@ -117,7 +127,9 @@ def debate(o: dict, anchor: float) -> dict:
           "target": _t(anchor, eps_a), "confidence": 0.45 + (0.2 if abs(o["waitlist_z"]) >= T["signal_z"] else 0),
           "argument": (f"Waitlisted share is {o['waitlist_now_pct']}% ({o['waitlist_change_14d_pp']:+} pp over 14 days, z = {o['waitlist_z']}). "
                        f"Owned spaces are {o['owned_spaces_now']:,.0f} vs {o['owned_spaces_q3']:,.0f} at Q3 ({owned_growth:+.1f}%). "
-                       f"That implies leased revenue per space {rev_demand:+.2f}% and EPS {eps_a:+.2f}%.")}
+                       f"That implies leased revenue per space {rev_demand:+.2f}% and EPS {eps_a:+.2f}%."
+                       + (f" Satellite night lights over the panel markets are {o['night_light_change_pct']:+}% (7-day vs 30-day median)." if o.get("night_light_change_pct") is not None else "")
+                       + (f" Snow in the northern strongholds is {o['north_snow_qtd_cm']} cm quarter to date vs {o['north_snow_ly_cm']} cm a year ago." if o.get("north_snow_qtd_cm") is not None else ""))}
 
     gap_pct = ((o["fy_model"] / o["fy_guidance"] - 1) * 100) if o["fy_model"] and o["fy_guidance"] else 0.0
     eps_b = gap_pct * EPS_PER_LEASED_REV
@@ -126,7 +138,8 @@ def debate(o: dict, anchor: float) -> dict:
           "target": _t(anchor, eps_b), "confidence": 0.6,
           "argument": (f"The run-rate model puts FY2026 revenue at ¥{o['fy_model']:,} mn against guidance of ¥{o['fy_guidance']:,.0f} mn "
                        f"({gap_pct:+.2f}%). At 4.5x operating leverage that is EPS {eps_b:+.2f}%. "
-                       f"Q4 model ¥{o['q4_model']:,} mn, band ¥{o['q4_lo']:,}–{o['q4_hi']:,} mn.")}
+                       f"Q4 model ¥{o['q4_model']:,} mn, band ¥{o['q4_lo']:,}–{o['q4_hi']:,} mn."
+                       + (f" Over the past month Paraca has moved {o['paraca_vs_park24_1m']:+.1%} relative to Park24." if o.get("paraca_vs_park24_1m") is not None else ""))}
 
     coverage = (o["portal_lots"] / o["official_lots"]) if o["portal_lots"] and o["official_lots"] else 0.0
     reliability = round(min(1.0, coverage / 0.30) * min(1.0, o["days_of_history"] / 90), 3)
@@ -136,7 +149,8 @@ def debate(o: dict, anchor: float) -> dict:
           "argument": (f"The portal covers {coverage:.0%} of Paraca's {o['official_lots']:,.0f} lots and has only {o['days_of_history']} days of history, "
                        f"so its reliability weight is {reliability}. {o['rent_changes']} rent changes have been seen. "
                        f"Collection is {'healthy' if healthy else 'failing'} ({o['runs_ok']}/{o['runs_total']} runs ok). "
-                       f"Nothing yet justifies moving from ¥{anchor:,.0f}.")}
+                       f"Nothing yet justifies moving from ¥{anchor:,.0f}. Weather, satellite and attention signals are context only: "
+                       f"none has been calibrated against revenue.")}
 
     # ---------- Round 2: each reads the others, rebuts one, and revises ----------
     strong = abs(o["waitlist_z"]) >= T["signal_z"]
