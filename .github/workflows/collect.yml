@@ -36,7 +36,7 @@ jobs:
       LOOP_SECONDS: "10500"
       FIELD_CSV_URL: ${{ secrets.FIELD_CSV_URL }}              # optional: published Google Sheet (CSV) of field checks
       TIMES_SNAPSHOTS_URL: ${{ vars.TIMES_SNAPSHOTS_URL }}     # optional: Times panel exports/parking_snapshots.csv
-      DASHBOARD_API_KEYS: ${{ secrets.DASHBOARD_API_KEYS }}    # class dashboard agent keys, comma separated
+      DASHBOARD_API_KEYS: ${{ secrets.DASHBOARD_API_KEYS || secrets.KYLE_PARACA }}    # class dashboard agent key(s), comma separated
       DASHBOARD_URL: https://fukuhara-seminar.onrender.com
     steps:
       - uses: actions/checkout@v4
