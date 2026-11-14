@@ -1,0 +1,120 @@
+{
+ "date": "2026-11-15",
+ "generated_utc": "2026-11-14T15:20:05+00:00",
+ "observation": {
+  "date": "2026-11-15",
+  "price": 1936.0,
+  "price_date": "2026-11-13",
+  "price_source": "daily close (Yahoo Finance 4809.T, Stooq fallback)",
+  "waitlist_now_pct": 64.16,
+  "waitlist_change_14d_pp": 0.0,
+  "waitlist_daily_sd_pp": 0.324,
+  "waitlist_z": 0.0,
+  "days_of_history": 27,
+  "listings": 461,
+  "rent_changes": 0,
+  "runs_ok": 1865,
+  "runs_total": 1865,
+  "portal_lots": 377,
+  "official_lots": 2701.0,
+  "owned_spaces_q3": 5912.0,
+  "owned_spaces_now": 5976,
+  "owned_lots_now": 354,
+  "owned_asof": "2026-11-06",
+  "revenue_owned_share": 0.16645244215938304,
+  "q4_model": 4824,
+  "q4_lo": 4699,
+  "q4_hi": 4949,
+  "q4_guidance_implied": 4890,
+  "fy_model": 18634,
+  "fy_guidance": 18700.0,
+  "latest_release": "2026-08-06",
+  "paraca_vs_park24_1m": -0.0661,
+  "north_snow_qtd_cm": 20.6,
+  "north_snow_ly_cm": 18.9,
+  "night_light_change_pct": 0.2
+ },
+ "debate": {
+  "round1": [
+   {
+    "agent": "demand",
+    "title": "Demand analyst (alt data)",
+    "target": 2007,
+    "confidence": 0.45,
+    "argument": "Waitlisted share is 64.16% (+0.0 pp over 14 days, z = 0.0). Owned spaces are 5,976 vs 5,912 at Q3 (+1.1%). That implies leased revenue per space +0.00% and EPS +0.81%. Satellite night lights over the panel markets are +0.2% (7-day vs 30-day median). Snow in the northern strongholds is 20.6 cm quarter to date vs 18.9 cm a year ago."
+   },
+   {
+    "agent": "valuation",
+    "title": "Valuation analyst (official data)",
+    "target": 1959,
+    "confidence": 0.6,
+    "argument": "The run-rate model puts FY2026 revenue at ¥18,634 mn against guidance of ¥18,700 mn (-0.35%). At 4.5x operating leverage that is EPS -1.59%. Q4 model ¥4,824 mn, band ¥4,699–4,949 mn. Over the past month Paraca has moved -6.6% relative to Park24."
+   },
+   {
+    "agent": "skeptic",
+    "title": "Skeptic (measurement and risk)",
+    "target": 1991,
+    "confidence": 0.55,
+    "argument": "The portal covers 14% of Paraca's 2,701 lots and has only 27 days of history, so its reliability weight is 0.14. 0 rent changes have been seen. Collection is healthy (1865/1865 runs ok). Nothing yet justifies moving from ¥1,991. Weather, satellite and attention signals are context only: none has been calibrated against revenue."
+   }
+  ],
+  "round2": [
+   {
+    "agent": "demand",
+    "title": "Demand analyst (alt data)",
+    "target": 2007,
+    "confidence": 0.45,
+    "argument": "Waitlisted share is 64.16% (+0.0 pp over 14 days, z = 0.0). Owned spaces are 5,976 vs 5,912 at Q3 (+1.1%). That implies leased revenue per space +0.00% and EPS +0.81%. Satellite night lights over the panel markets are +0.2% (7-day vs 30-day median). Snow in the northern strongholds is 20.6 cm quarter to date vs 18.9 cm a year ago.",
+    "rebuttal": "To the skeptic: fair, the 14-day move is only 0.0 SD of daily noise. I halve my adjustment, but the owned-lot additions are official and stay in.",
+    "moved": 0
+   },
+   {
+    "agent": "valuation",
+    "title": "Valuation analyst (official data)",
+    "target": 1975,
+    "confidence": 0.6,
+    "argument": "The run-rate model puts FY2026 revenue at ¥18,634 mn against guidance of ¥18,700 mn (-0.35%). At 4.5x operating leverage that is EPS -1.59%. Q4 model ¥4,824 mn, band ¥4,699–4,949 mn. Over the past month Paraca has moved -6.6% relative to Park24.",
+    "rebuttal": "To the demand analyst: guidance-implied Q4 (¥4,890 mn) sits inside my model's own error band, so the shortfall is not significant. I halve it.",
+    "moved": 16
+   },
+   {
+    "agent": "skeptic",
+    "title": "Skeptic (measurement and risk)",
+    "target": 1993,
+    "confidence": 0.55,
+    "argument": "The portal covers 14% of Paraca's 2,701 lots and has only 27 days of history, so its reliability weight is 0.14. 0 rent changes have been seen. Collection is healthy (1865/1865 runs ok). Nothing yet justifies moving from ¥1,991. Weather, satellite and attention signals are context only: none has been calibrated against revenue.",
+    "rebuttal": "To the valuation analyst: I accept official data over portal data. I let the demand case in at my reliability weight (0.14), which moves me to ¥1,993.",
+    "moved": 2
+   }
+  ],
+  "combined_target": 1990,
+  "spread_pct": 1.61,
+  "reliability": 0.14,
+  "guidance_gap_inside_band": true
+ },
+ "decision": {
+  "published_target": 1991.0,
+  "published_rating": "UNDERWEIGHT",
+  "expected_return": 0.0284,
+  "required_return": 0.086,
+  "target_changed": false,
+  "rating_changed": false,
+  "rules_applied": [
+   "HOLD: combined target ¥1,990 is -0.05% from published (< 3.0%)",
+   "Rating stays UNDERWEIGHT: expected return +2.8% vs required 8.6% ±3.0pp"
+  ]
+ },
+ "thresholds": {
+  "target_change_pct": 3.0,
+  "max_spread_pct": 15.0,
+  "rating_band_pp": 3.0,
+  "rating_confirm_days": 2,
+  "signal_z": 2.0,
+  "demand_rev_per_pp": 0.5,
+  "demand_rev_cap_pct": 3.0
+ },
+ "previous": {
+  "target": 1991.0,
+  "rating": "UNDERWEIGHT"
+ }
+}

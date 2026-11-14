@@ -1,0 +1,37 @@
+{
+ "published_target": 1991.0,
+ "published_rating": "UNDERWEIGHT",
+ "since": "2026-10-16",
+ "history": [
+  {
+   "d": "2026-11-13",
+   "target": 1991.0,
+   "rating": "UNDERWEIGHT",
+   "combined": 1990,
+   "price": 1940.0
+  },
+  {
+   "d": "2026-11-14",
+   "target": 1991.0,
+   "rating": "UNDERWEIGHT",
+   "combined": 1989,
+   "price": 1957.0
+  },
+  {
+   "d": "2026-11-15",
+   "target": 1991.0,
+   "rating": "UNDERWEIGHT",
+   "combined": 1990,
+   "price": 1936.0
+  }
+ ],
+ "pending_rating": null,
+ "pending_streak": 0,
+ "last_run_date": "2026-11-15",
+ "last_release_seen": "2026-08-06",
+ "last_price": {
+  "close": 1936.0,
+  "date": "2026-11-13",
+  "source": "daily close (Yahoo Finance 4809.T, Stooq fallback)"
+ }
+}
